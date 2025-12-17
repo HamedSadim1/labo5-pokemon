@@ -7,9 +7,16 @@ interface PokemonCardProps {
   onClick: (url: string) => void;
 }
 
+/**
+ * Component that displays a single Pokemon card with name and favorite toggle.
+ * Clicking the card triggers the onClick callback, and the heart icon toggles favorites.
+ */
 const PokemonCard: React.FC<PokemonCardProps> = ({ pokemon, onClick }) => {
   const { toggleFavorite, isFavorite } = useFavorites();
 
+  /**
+   * Handles the favorite toggle button click, preventing event propagation.
+   */
   const handleFavoriteClick = (e: React.MouseEvent) => {
     e.stopPropagation();
     toggleFavorite(pokemon.name);

@@ -7,6 +7,10 @@ interface HeaderProps {
   onTabChange: (tab: "all" | "favorites") => void;
 }
 
+/**
+ * Header component that displays tab buttons for All Pokemon and Favorites,
+ * along with a dark mode toggle button.
+ */
 const Header: React.FC<HeaderProps> = ({ activeTab, onTabChange }) => {
   const { darkMode, toggleDarkMode } = useDarkMode();
   const { favorites } = useFavorites();
