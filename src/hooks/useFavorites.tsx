@@ -2,6 +2,9 @@
 import { createContext, useContext, type ReactNode } from "react";
 import { useLocalStorage } from "./useLocalStorage";
 
+const isStringArray = (value: unknown): value is string[] =>
+  Array.isArray(value) && value.every((item) => typeof item === "string");
+
 interface FavoritesContextValue {
   favorites: string[];
   toggleFavorite: (pokemonName: string) => void;
@@ -17,7 +20,8 @@ const FavoritesContext = createContext<FavoritesContextValue | null>(null);
 export function FavoritesProvider({ children }: { children: ReactNode }) {
   const [favorites, setFavorites] = useLocalStorage<string[]>(
     "pokemon-favorites",
-    []
+    [],
+    isStringArray
   );
 
   /**

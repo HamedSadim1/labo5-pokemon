@@ -1,10 +1,31 @@
 import { useEffect, useState } from "react";
 
-export function useLocalStorage<T>(key: string, initialValue: T) {
+function parseStoredValue<T>(
+  raw: string | null,
+  initialValue: T,
+  validate?: (value: unknown) => value is T
+): T {
+  if (raw === null) return initialValue;
+  try {
+    const parsed: unknown = JSON.parse(raw);
+    return validate ? (validate(parsed) ? parsed : initialValue) : (parsed as T);
+  } catch {
+    return initialValue;
+  }
+}
+
+export function useLocalStorage<T>(
+  key: string,
+  initialValue: T,
+  validate?: (value: unknown) => value is T
+) {
   const [storedValue, setStoredValue] = useState<T>(() => {
     try {
-      const item = window.localStorage.getItem(key);
-      return item ? (JSON.parse(item) as T) : initialValue;
+      return parseStoredValue(
+        window.localStorage.getItem(key),
+        initialValue,
+        validate
+      );
     } catch (error) {
       console.error(`Error reading localStorage key "${key}":`, error);
       return initialValue;
@@ -28,18 +49,11 @@ export function useLocalStorage<T>(key: string, initialValue: T) {
   useEffect(() => {
     const handleStorage = (event: StorageEvent) => {
       if (event.key !== key) return;
-      try {
-        setStoredValue(
-          event.newValue ? (JSON.parse(event.newValue) as T) : initialValue
-        );
-      } catch (error) {
-        console.error(`Error syncing localStorage key "${key}":`, error);
-      }
+      setStoredValue(parseStoredValue(event.newValue, initialValue, validate));
     };
-
     window.addEventListener("storage", handleStorage);
     return () => window.removeEventListener("storage", handleStorage);
-  }, [key, initialValue]);
+  }, [key, initialValue, validate]);
 
   return [storedValue, setStoredValue] as const;
 }

@@ -1,7 +1,4 @@
 export interface IPokemon {
-  count: number;
-  next: string | null;
-  previous: string | null;
   results: Result[];
 }
 

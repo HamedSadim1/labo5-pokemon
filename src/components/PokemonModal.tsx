@@ -1,9 +1,8 @@
 import { type PokemonDetail } from "../Services/PokemonInterface";
-import { formatPokemonName, getTypeColor } from "../utils/pokemonUtils";
+import { formatDexNumber, formatPokemonName, getTypeColor } from "../utils/pokemonUtils";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { Button } from "@/components/ui/button";
-import { Loader2, RefreshCw } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -11,6 +10,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import ErrorState from "./ErrorState";
+import SpritePlaceholder from "./SpritePlaceholder";
 
 interface PokemonModalProps {
   pokemon: PokemonDetail | null;
@@ -46,15 +47,7 @@ const PokemonModal = ({
         </DialogHeader>
 
         <div className="max-h-[calc(90dvh-10rem)] overflow-y-auto pr-1" tabIndex={0}>
-          {error && (
-            <div className="flex flex-col items-center gap-4 py-6 text-center">
-              <p className="text-sm text-destructive">{error}</p>
-              <Button variant="outline" onClick={onRetry}>
-                <RefreshCw aria-hidden="true" />
-                Try again
-              </Button>
-            </div>
-          )}
+          {error && <ErrorState message={error} onRetry={onRetry} compact />}
 
           {!error && !pokemon && (
             <div className="flex justify-center py-10" role="status">
@@ -67,7 +60,7 @@ const PokemonModal = ({
             <div className="flex flex-col gap-5">
               <div className="flex flex-col items-center gap-2">
                 <Badge variant="secondary" className="font-mono text-xs">
-                  #{String(pokemon.id).padStart(3, "0")}
+                  {formatDexNumber(pokemon.id)}
                 </Badge>
                 {spriteUrl ? (
                   <img
@@ -76,11 +69,7 @@ const PokemonModal = ({
                     className="size-36 object-contain"
                   />
                 ) : (
-                  <div className="flex size-36 items-center justify-center rounded-lg bg-muted">
-                    <span className="text-sm text-muted-foreground">
-                      No image
-                    </span>
-                  </div>
+                  <SpritePlaceholder size="lg" />
                 )}
               </div>
 
@@ -113,9 +102,8 @@ const PokemonModal = ({
                     <Badge
                       key={abilityInfo.ability.name}
                       variant="outline"
-                      className="capitalize"
                     >
-                      {abilityInfo.ability.name.replace("-", " ")}
+                      {formatPokemonName(abilityInfo.ability.name)}
                       {abilityInfo.is_hidden && (
                         <span className="text-muted-foreground">(hidden)</span>
                       )}
@@ -128,8 +116,8 @@ const PokemonModal = ({
                 <h3 className="text-sm font-medium">Stats</h3>
                 {(pokemon.stats ?? []).map((stat) => (
                   <div key={stat.stat.name} className="flex items-center gap-3">
-                    <span className="w-24 shrink-0 text-sm capitalize text-muted-foreground">
-                      {stat.stat.name.replace("-", " ")}
+                    <span className="w-24 shrink-0 text-sm text-muted-foreground">
+                      {formatPokemonName(stat.stat.name)}
                     </span>
                     <Progress
                       value={Math.min((stat.base_stat / 255) * 100, 100)}

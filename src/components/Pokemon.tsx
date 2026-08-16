@@ -18,6 +18,12 @@ import Pagination from "./Pagination";
 import PokemonModal from "./PokemonModal";
 
 const REQUEST_TIMEOUT_MS = 15000;
+const TIMEOUT_MESSAGE = "The request timed out. Please try again.";
+const GENERIC_LIST_ERROR_MESSAGE = "Failed to load Pokémon. Please try again.";
+const GENERIC_DETAIL_ERROR_MESSAGE = "Failed to load this Pokémon. Please try again.";
+
+const isTimeout = (err: unknown): boolean =>
+  axios.isAxiosError(err) && err.code === "ECONNABORTED";
 
 /**
  * Main Pokemon component: loads the full Pokemon list once, then handles
@@ -59,12 +65,14 @@ const Pokemon: React.FC = () => {
         if (Array.isArray(results)) {
           setAllPokemon(results);
         } else {
-          setError("Failed to load Pokémon. Please try again.");
+          setError(GENERIC_LIST_ERROR_MESSAGE);
         }
       })
-      .catch((err) => {
+      .catch((err: unknown) => {
         console.error("Error fetching Pokemon:", err);
-        if (active) setError("Failed to load Pokémon. Please try again.");
+        if (active) {
+          setError(isTimeout(err) ? TIMEOUT_MESSAGE : GENERIC_LIST_ERROR_MESSAGE);
+        }
       })
       .finally(() => {
         if (active) setLoading(false);
@@ -145,12 +153,14 @@ const Pokemon: React.FC = () => {
       .then((response) => {
         setSelectedPokemon(response.data);
       })
-      .catch((err) => {
+      .catch((err: unknown) => {
         if (axios.isCancel(err)) {
           return;
         }
         console.error("Error fetching Pokemon detail:", err);
-        setDetailError("Failed to load this Pokémon. Please try again.");
+        setDetailError(
+          isTimeout(err) ? TIMEOUT_MESSAGE : GENERIC_DETAIL_ERROR_MESSAGE
+        );
       });
   };
 
