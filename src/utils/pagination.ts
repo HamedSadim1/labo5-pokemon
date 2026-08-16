@@ -1,4 +1,4 @@
-import { MAX_VISIBLE_PAGES } from "../constants";
+import { MAX_VISIBLE_PAGES } from "@/constants";
 
 /** Placeholder token used in the pagination window for collapsed ranges. */
 export const ELLIPSIS = "ellipsis" as const;

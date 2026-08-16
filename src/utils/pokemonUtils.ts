@@ -1,5 +1,5 @@
-import { SPRITE_BASE_URL } from "../config";
-import { DEX_NUMBER_WIDTH } from "../constants";
+import { SPRITE_BASE_URL } from "@/config";
+import { DEX_NUMBER_WIDTH } from "@/constants";
 
 export type PokemonType =
   | "normal"

@@ -1,6 +1,6 @@
 import { RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { TEXT } from "../constants";
+import { TEXT } from "@/constants";
 import { cn } from "@/lib/utils";
 
 interface ErrorStateProps {

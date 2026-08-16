@@ -1,4 +1,4 @@
-import { POKEMON_GRID_CLASS, SKELETON_COUNT } from "../constants";
+import { POKEMON_GRID_CLASS, SKELETON_COUNT } from "@/constants";
 import { Skeleton } from "@/components/ui/skeleton";
 
 /**

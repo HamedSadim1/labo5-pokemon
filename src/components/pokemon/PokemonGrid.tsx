@@ -1,8 +1,8 @@
 import React from "react";
-import { type Result } from "../Services/PokemonInterface";
-import { POKEMON_GRID_CLASS } from "../constants";
+import { type Result } from "@/Services/PokemonInterface";
+import { POKEMON_GRID_CLASS } from "@/constants";
 import { cn } from "@/lib/utils";
-import PokemonCard from "./PokemonCard";
+import PokemonCard from "@/components/pokemon/PokemonCard";
 
 interface PokemonGridProps {
   pokemon: Result[];

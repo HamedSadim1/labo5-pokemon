@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { parseStoredValue } from "../utils/storage";
+import { parseStoredValue } from "@/utils/storage";
 
 export function useLocalStorage<T>(
   key: string,

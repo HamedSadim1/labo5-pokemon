@@ -1,5 +1,5 @@
 import { Search, X } from "lucide-react";
-import { PAGE_SIZE_OPTIONS, TEXT } from "../constants";
+import { PAGE_SIZE_OPTIONS, TEXT } from "@/constants";
 import { Input } from "@/components/ui/input";
 import {
   Select,

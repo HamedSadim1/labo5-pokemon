@@ -1,4 +1,4 @@
-import { TEXT } from "../constants";
+import { TEXT } from "@/constants";
 import { cn } from "@/lib/utils";
 
 interface SpritePlaceholderProps {

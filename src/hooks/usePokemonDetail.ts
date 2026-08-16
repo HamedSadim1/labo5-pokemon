@@ -1,12 +1,12 @@
 import { useEffect, useRef, useState } from "react";
 import axios from "axios";
-import { type PokemonDetail } from "../Services/PokemonInterface";
+import { type PokemonDetail } from "@/Services/PokemonInterface";
 import {
   GENERIC_DETAIL_ERROR_MESSAGE,
   REQUEST_TIMEOUT_MS,
   TIMEOUT_MESSAGE,
-} from "../constants";
-import { isTimeout } from "../utils/axios";
+} from "@/constants";
+import { isTimeout } from "@/utils/axios";
 
 interface UsePokemonDetailResult {
   selectedPokemon: PokemonDetail | null;

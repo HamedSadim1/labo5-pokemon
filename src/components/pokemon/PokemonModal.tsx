@@ -1,11 +1,11 @@
-import { type PokemonDetail } from "../Services/PokemonInterface";
-import { formatDexNumber, formatPokemonName, getTypeColor } from "../utils/pokemonUtils";
+import { type PokemonDetail } from "@/Services/PokemonInterface";
+import { formatDexNumber, formatPokemonName, getTypeColor } from "@/utils/pokemonUtils";
 import {
   DECIMETERS_PER_METER,
   MAX_BASE_STAT,
   MODAL_BODY_MAX_HEIGHT_CLASS,
   TEXT,
-} from "../constants";
+} from "@/constants";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Loader2 } from "lucide-react";
@@ -17,8 +17,8 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
-import ErrorState from "./ErrorState";
-import SpritePlaceholder from "./SpritePlaceholder";
+import ErrorState from "@/components/common/ErrorState";
+import SpritePlaceholder from "@/components/common/SpritePlaceholder";
 
 interface PokemonModalProps {
   pokemon: PokemonDetail | null;

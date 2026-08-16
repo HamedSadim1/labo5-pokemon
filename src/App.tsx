@@ -1,6 +1,6 @@
-import Pokemon from "./components/Pokemon";
+import Pokemon from "@/components/pokemon/Pokemon";
 import { Toaster } from "@/components/ui/sonner";
-import { CONTAINER_CLASS, TEXT } from "./constants";
+import { CONTAINER_CLASS, TEXT } from "@/constants";
 import { cn } from "@/lib/utils";
 
 /**

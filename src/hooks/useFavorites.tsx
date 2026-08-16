@@ -1,8 +1,8 @@
 /* eslint-disable react-refresh/only-export-components */
 import { createContext, useContext, useMemo, type ReactNode } from "react";
-import { useLocalStorage } from "./useLocalStorage";
-import { STORAGE_KEYS, TEXT } from "../constants";
-import { isStringArray } from "../utils/guards";
+import { useLocalStorage } from "@/hooks/useLocalStorage";
+import { STORAGE_KEYS, TEXT } from "@/constants";
+import { isStringArray } from "@/utils/guards";
 
 interface FavoritesContextValue {
   favorites: string[];

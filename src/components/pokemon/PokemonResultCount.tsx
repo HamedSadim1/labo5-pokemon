@@ -1,4 +1,4 @@
-import { TEXT } from "../constants";
+import { TEXT } from "@/constants";
 
 interface PokemonResultCountProps {
   first: number;

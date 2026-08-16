@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
-import { TEXT } from "../constants";
-import { ELLIPSIS, getVisiblePages } from "../utils/pagination";
+import { TEXT } from "@/constants";
+import { ELLIPSIS, getVisiblePages } from "@/utils/pagination";
 
 interface PaginationProps {
   page: number;

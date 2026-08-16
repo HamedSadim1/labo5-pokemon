@@ -1,18 +1,18 @@
 import { useState } from "react";
 import { Heart } from "lucide-react";
 import { toast } from "sonner";
-import { type Result } from "../Services/PokemonInterface";
-import { useFavorites } from "../hooks/useFavorites";
+import { type Result } from "@/Services/PokemonInterface";
+import { useFavorites } from "@/hooks/useFavorites";
 import {
   formatDexNumber,
   formatPokemonName,
   getPokemonId,
   getPokemonSprite,
-} from "../utils/pokemonUtils";
+} from "@/utils/pokemonUtils";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { TEXT } from "../constants";
-import SpritePlaceholder from "./SpritePlaceholder";
+import { TEXT } from "@/constants";
+import SpritePlaceholder from "@/components/common/SpritePlaceholder";
 
 interface PokemonCardProps {
   pokemon: Result;

@@ -1,6 +1,6 @@
 import { HeartOff, SearchX } from "lucide-react";
-import { TABS, TEXT, type PokemonTab } from "../constants";
-import EmptyState from "./EmptyState";
+import { TABS, TEXT, type PokemonTab } from "@/constants";
+import EmptyState from "@/components/common/EmptyState";
 
 interface PokemonEmptyStateProps {
   activeTab: PokemonTab;

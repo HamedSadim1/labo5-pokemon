@@ -53,6 +53,12 @@ export default tseslint.config(
       'no-debugger': 'error',
       eqeqeq: ['error', 'always'],
       'prefer-const': 'error',
+
+      // Verplicht de @-alias voor interne imports (geen relatieve paden)
+      'no-restricted-imports': [
+        'error',
+        { patterns: ['./**', '../**'] },
+      ],
     },
   },
   {

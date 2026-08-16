@@ -1,7 +1,7 @@
 import { Heart, Moon, Sun } from "lucide-react";
-import { useDarkMode } from "../hooks/useDarkMode";
-import { useFavorites } from "../hooks/useFavorites";
-import { TABS, TEXT, type PokemonTab } from "../constants";
+import { useDarkMode } from "@/hooks/useDarkMode";
+import { useFavorites } from "@/hooks/useFavorites";
+import { TABS, TEXT, type PokemonTab } from "@/constants";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 

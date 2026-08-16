@@ -6,7 +6,7 @@
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css)
 ![shadcn/ui](https://img.shields.io/badge/shadcn/ui-000000?style=for-the-badge&logo=shadcn/ui)
 
-## A stunning, modern Pokémon discovery app with glassmorphism design
+## A clean, modern Pokémon discovery app built with React, Tailwind CSS and shadcn/ui
 
 [🌐 Live Demo](https://pokemon-explorer-demo.vercel.app) • [🐛 Report Bug](https://github.com/HamedSadim1/labo5-pokemon/issues)
 
@@ -14,61 +14,42 @@
 
 ## ✨ Features
 
-### 🎨 **Modern Glassmorphism Design**
+### 🔍 Pokémon Discovery
 
-- Beautiful transparent glass-like UI components
-- Animated gradient backgrounds with floating blobs
-- Smooth hover effects and transitions
-- Professional shadcn/ui components
+- **Browse & search**: grid view over the full Pokédex with a debounced, client-side name search
+- **Pagination**: ellipsis-style page window and an items-per-page selector
+- **Detail modal**: types, abilities, base stats, height/weight and artwork, with loading, error and retry states plus a "No image" sprite fallback
 
-### 🔍 **Advanced Pokémon Discovery**
+### ❤️ Favorites
 
-- **Browse & Search**: Grid view with pagination and real-time search
-- **Detailed Modals**: Professional modal dialogs with comprehensive Pokémon information
-- **Favorites System**: Save and manage your favorite Pokémon
-- **Dark Mode Toggle**: Seamless theme switching
+- Toggle favorites from any card, with a live counter in the header
+- Dedicated **Favorites** tab
+- Persisted in `localStorage` and kept in sync across browser tabs
 
-### 📱 **Responsive & Accessible**
+### 🌗 Dark Mode
 
-- Fully responsive design for all screen sizes
-- Keyboard navigation and screen reader support
-- Fast loading with optimized images
-- Progressive Web App (PWA) ready
+- Light/dark toggle persisted in `localStorage`
+- `color-scheme` keeps native scrollbars and form controls in sync with the theme
 
-### 🚀 **Performance Optimized**
+### ♿ Accessible & Responsive
 
-- Built with Vite for lightning-fast development
-- TypeScript for type safety and better DX
-- Lazy loading and code splitting
-- Modern React 19 with concurrent features
+- Responsive grid (1–4 columns) and scrollable modal on small screens
+- Accessible labels, keyboard focus, WCAG-AA type-badge contrast, skip-to-content link, reduced-motion support and an error boundary
+
+### 🧱 Robust State & UX
+
+- Skeleton loading and reusable empty/error states
+- Shared favorites via React context, abortable detail fetches (no race conditions) and request timeouts
 
 ---
 
 ## 🛠️ Tech Stack
 
-### **Frontend Framework**
-
-- **React 19** - Latest React with concurrent features
-- **TypeScript** - Type-safe JavaScript
-- **Vite** - Next-generation frontend tooling
-
-### **Styling & UI**
-
-- **Tailwind CSS** - Utility-first CSS framework
-- **shadcn/ui** - Modern component library built on Radix UI
-- **Lucide Icons** - Beautiful icon set
-
-### **Data & API**
-
-- **Axios** - HTTP client for API requests
-- **PokeAPI** - Official Pokémon REST API
-
-### **Development Tools**
-
-- **ESLint** - Code linting (flat config with type-aware TypeScript rules)
-- **Husky** - Git hooks
-- **lint-staged** - Lint staged files on commit
-- **commitlint** - Enforce conventional commit messages
+- **React 19** + **TypeScript** + **Vite**
+- **Tailwind CSS v4** (CSS-first config) + **shadcn/ui** (Radix UI) + **tw-animate-css**
+- **lucide-react** (icons), **sonner** (toasts), **class-variance-authority** + **clsx** + **tailwind-merge**
+- **axios** + **PokéAPI**
+- **ESLint** (flat config with type-aware rules), **Husky**, **lint-staged**, **commitlint**
 
 ---
 
@@ -76,8 +57,8 @@
 
 ### Prerequisites
 
-- Node.js 20.19+ or 22.12+ and npm
-- Git
+- Node.js 20.19+ or 22.12+
+- npm
 
 ### Installation
 
@@ -94,24 +75,27 @@
    npm install
    ```
 
-3. **Start the development server**
+3. **(Optional) Configure environment variables**
+
+   ```bash
+   cp .env.example .env
+   ```
+
+   See [Environment Variables](#environment-variables) below.
+
+4. **Start the development server**
 
    ```bash
    npm run dev
    ```
 
-4. **Open your browser**
-
-   Visit: [http://localhost:5173](http://localhost:5173)
+5. **Open your browser** at [http://localhost:5173](http://localhost:5173)
 
 ### Build for Production
 
 ```bash
-# Create optimized production build
-npm run build
-
-# Preview production build locally
-npm run preview
+npm run build       # optimized production build
+npm run preview     # preview the production build locally
 ```
 
 ### Available Scripts
@@ -126,13 +110,22 @@ npm run preview
 
 ---
 
+## 🔧 Environment Variables
+
+The API and sprite URLs are configurable via `.env` (copy `.env.example`):
+
+| Variable | Default | Description |
+| --- | --- | --- |
+| `VITE_POKE_API_URL` | `https://pokeapi.co/api/v2` | Base URL for the PokéAPI |
+| `VITE_SPRITE_BASE_URL` | `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon` | Base URL for sprite images |
+
+---
+
 ## ✅ Code Quality
 
 ### Git Hooks (Husky)
 
-Git hooks are set up automatically when you install dependencies:
-
-- **pre-commit** — runs `lint-staged`, which fixes lint issues on staged files
+- **pre-commit** — runs `lint-staged`, fixing lint issues on staged `*.{ts,tsx}` files
 - **commit-msg** — runs `commitlint` to enforce [Conventional Commits](https://www.conventionalcommits.org/)
 
 ### Pull Request Checks
@@ -147,34 +140,27 @@ A GitHub Actions workflow (`.github/workflows/pr.yml`) runs on every pull reques
 
 ## 📖 Usage
 
-### Browsing Pokémon
+### Browsing & searching
 
-- Use the **All Pokémon** tab to browse all available Pokémon
-- Navigate through pages using the pagination controls
-- Adjust items per page with the dropdown selector
+- Use the **All Pokémon** tab to browse the full dex
+- Search by name — results filter as you type (debounced)
+- Navigate pages with the pagination controls and adjust items per page
 
-### Searching Pokémon
+### Viewing details
 
-- Use the search bar to find Pokémon by name
-- Search is performed in real-time as you type
-- Results are filtered instantly
+- Click any card to open the detail modal
+- See types, abilities, base stats, height/weight and artwork
+- Close with the ✕ button, `Esc`, or by clicking outside
 
-### Viewing Details
+### Managing favorites
 
-- Click on any Pokémon card to open the detailed modal
-- View comprehensive information including stats, types, and artwork
-- Use the close button or click outside to dismiss
+- Click the heart on any card to add/remove a favorite
+- Switch to the **Favorites** tab to view only favorites
+- Favorites persist and sync across tabs
 
-### Managing Favorites
+### Dark mode
 
-- Click the heart icon on any Pokémon card to add/remove from favorites
-- Switch to the **Favorites** tab to view only your favorite Pokémon
-- Favorites are persisted in localStorage
-
-### Dark Mode
-
-- Toggle between light and dark themes using the moon/sun button
-- Theme preference is automatically saved
+- Toggle light/dark with the moon/sun button; the preference is saved
 
 ---
 
@@ -183,111 +169,76 @@ A GitHub Actions workflow (`.github/workflows/pr.yml`) runs on every pull reques
 ```text
 src/
 ├── components/
-│   ├── ui/                 # shadcn/ui components
-│   │   ├── dialog.tsx
-│   │   └── ...
-│   ├── Header.tsx          # Navigation and theme toggle
-│   ├── SearchBar.tsx       # Search and pagination controls
-│   ├── PokemonCard.tsx     # Individual Pokémon cards
-│   ├── PokemonGrid.tsx     # Grid layout component
-│   ├── PokemonModal.tsx    # Detailed Pokémon modal
-│   ├── Pagination.tsx      # Page navigation
-│   └── LoadingSpinner.tsx  # Loading animation
+│   ├── ui/                   # shadcn/ui primitives (button, dialog, select, …)
+│   ├── pokemon/              # Pokémon feature components
+│   │   ├── Pokemon.tsx       # Main orchestrator (filter + pagination)
+│   │   ├── PokemonGrid.tsx   # Responsive card grid
+│   │   ├── PokemonCard.tsx   # Individual card + favorite toggle
+│   │   ├── PokemonModal.tsx  # Detail dialog
+│   │   ├── PokemonSkeleton.tsx   # Skeleton loading grid
+│   │   ├── PokemonResultCount.tsx# "Showing X–Y of N" line
+│   │   └── PokemonEmptyState.tsx # Tab-aware empty state
+│   └── common/               # Shared UI components
+│       ├── Header.tsx        # Tabs + theme toggle
+│       ├── SearchBar.tsx     # Search + items-per-page selector
+│       ├── Pagination.tsx    # Page navigation
+│       ├── EmptyState.tsx    # Reusable empty placeholder
+│       ├── ErrorState.tsx    # Reusable error + retry
+│       ├── ErrorBoundary.tsx # Render-error fallback
+│       └── SpritePlaceholder.tsx # "No image" placeholder
 ├── hooks/
-│   ├── useDarkMode.ts      # Theme management
-│   ├── useFavorites.ts     # Favorites functionality
-│   └── useLocalStorage.ts  # Local storage utilities
+│   ├── usePokemonList.ts     # List fetching + loading/error/retry
+│   ├── usePokemonDetail.ts   # Detail fetch + modal state + abort
+│   ├── useDebouncedValue.ts  # Generic debounce
+│   ├── useFavorites.tsx      # Favorites context provider
+│   ├── useDarkMode.ts        # Theme management
+│   └── useLocalStorage.ts    # Persisted state hook
 ├── lib/
-│   └── utils.ts            # Utility functions
+│   └── utils.ts              # cn() (clsx + tailwind-merge)
 ├── Services/
-│   └── PokemonInterface.ts # TypeScript interfaces
-└── utils/
-    └── pokemonUtils.ts     # Pokémon-specific utilities
+│   └── PokemonInterface.ts   # API types
+├── utils/
+│   ├── axios.ts              # isTimeout()
+│   ├── guards.ts             # Runtime type guards
+│   ├── pagination.ts         # getVisiblePages()
+│   ├── pokemonUtils.ts       # Name/number/type/sprite helpers
+│   └── storage.ts            # parseStoredValue()
+├── config.ts                 # Env-configurable URLs
+├── constants.ts              # App constants + UI copy (SSOT)
+├── App.tsx
+├── index.tsx
+├── index.css                 # Tailwind v4 theme + base styles
+└── vite-env.d.ts
 ```
-
----
-
-## 🎨 Design System
-
-### Color Palette
-
-- **Primary**: Purple to blue gradient backgrounds
-- **Accent**: Yellow to pink gradients for highlights
-- **Glass**: Semi-transparent whites with blur effects
-- **Text**: White on dark backgrounds, dark on light
-
-### Typography
-
-- **Font Family**: System fonts for optimal performance
-- **Sizes**: Responsive scaling from mobile to desktop
-- **Weights**: Medium and bold for hierarchy
-
-### Components
-
-- **Cards**: Glassmorphism with hover animations
-- **Buttons**: Rounded with backdrop blur effects
-- **Modals**: Full-screen overlays with smooth transitions
-- **Inputs**: Transparent backgrounds with focus states
 
 ---
 
 ## 🔧 Configuration
 
-### Tailwind Configuration
-
-The project uses Tailwind CSS v4 with custom animations:
-
-```css
-@keyframes blob {
-  0% {
-    transform: translate(0px, 0px) scale(1);
-  }
-  33% {
-    transform: translate(30px, -50px) scale(1.1);
-  }
-  66% {
-    transform: translate(-20px, 20px) scale(0.9);
-  }
-  100% {
-    transform: translate(0px, 0px) scale(1);
-  }
-}
-```
+- **Tailwind CSS v4** is configured CSS-first in `src/index.css` (no `tailwind.config.js`) — theme tokens and dark mode are defined via CSS variables.
+- The `@` path alias maps to `src/` (configured in `vite.config.ts` and `tsconfig.json`).
+- TypeScript runs in `strict` mode with a modern `es2022` target and `bundler` module resolution.
 
 ---
 
 ## 🤝 Contributing
 
-We welcome contributions! Please follow these steps:
-
 1. Fork the repository
 2. Create a feature branch: `git checkout -b feature/amazing-feature`
-3. Commit your changes: `git commit -m 'feat: add amazing feature'`
-4. Push to the branch: `git push origin feature/amazing-feature`
+3. Commit with a conventional message: `git commit -m 'feat: add amazing feature'`
+4. Push the branch: `git push origin feature/amazing-feature`
 5. Open a Pull Request
 
-### Development Guidelines
-
-- Follow the existing code style
-- Write conventional commit messages (enforced by commitlint)
-- Run `npm run lint` and `npm run typecheck` before committing
-- Add tests for new features
-- Update documentation as needed
-
----
-
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+Before committing, run `npm run lint` and `npm run typecheck`. Commit messages must follow Conventional Commits (enforced by commitlint).
 
 ---
 
 ## 🙏 Acknowledgments
 
-- **PokeAPI** for providing the Pokémon data
-- **shadcn/ui** for the beautiful component library
-- **Tailwind CSS** for the utility-first styling approach
-- **Vite** for the blazing fast build tool
+- **PokéAPI** for the Pokémon data
+- **shadcn/ui** and **Radix UI** for the component primitives
+- **Tailwind CSS** for the utility-first styling
+- **Vite** for the build tooling
 
 ---
 

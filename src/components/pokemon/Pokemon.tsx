@@ -1,24 +1,24 @@
 import React, { useMemo, useState } from "react";
-import { useFavorites } from "../hooks/useFavorites";
-import { usePokemonList } from "../hooks/usePokemonList";
-import { usePokemonDetail } from "../hooks/usePokemonDetail";
-import { useDebouncedValue } from "../hooks/useDebouncedValue";
+import { useFavorites } from "@/hooks/useFavorites";
+import { usePokemonList } from "@/hooks/usePokemonList";
+import { usePokemonDetail } from "@/hooks/usePokemonDetail";
+import { useDebouncedValue } from "@/hooks/useDebouncedValue";
 import {
   CONTAINER_CLASS,
   DEBOUNCE_MS,
   DEFAULT_PAGE_SIZE,
   TABS,
   type PokemonTab,
-} from "../constants";
-import Header from "./Header";
-import SearchBar from "./SearchBar";
-import ErrorState from "./ErrorState";
-import PokemonEmptyState from "./PokemonEmptyState";
-import PokemonSkeleton from "./PokemonSkeleton";
-import PokemonGrid from "./PokemonGrid";
-import PokemonResultCount from "./PokemonResultCount";
-import Pagination from "./Pagination";
-import PokemonModal from "./PokemonModal";
+} from "@/constants";
+import Header from "@/components/common/Header";
+import SearchBar from "@/components/common/SearchBar";
+import ErrorState from "@/components/common/ErrorState";
+import PokemonEmptyState from "@/components/pokemon/PokemonEmptyState";
+import PokemonSkeleton from "@/components/pokemon/PokemonSkeleton";
+import PokemonGrid from "@/components/pokemon/PokemonGrid";
+import PokemonResultCount from "@/components/pokemon/PokemonResultCount";
+import Pagination from "@/components/common/Pagination";
+import PokemonModal from "@/components/pokemon/PokemonModal";
 
 /**
  * Main Pokemon component: orchestrates the list/detail hooks and the search,

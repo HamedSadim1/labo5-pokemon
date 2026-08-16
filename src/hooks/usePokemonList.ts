@@ -1,14 +1,14 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { type IPokemon, type Result } from "../Services/PokemonInterface";
-import { POKE_API_BASE_URL } from "../config";
+import { type IPokemon, type Result } from "@/Services/PokemonInterface";
+import { POKE_API_BASE_URL } from "@/config";
 import {
   GENERIC_LIST_ERROR_MESSAGE,
   LIST_LIMIT,
   REQUEST_TIMEOUT_MS,
   TIMEOUT_MESSAGE,
-} from "../constants";
-import { isTimeout } from "../utils/axios";
+} from "@/constants";
+import { isTimeout } from "@/utils/axios";
 
 interface UsePokemonListResult {
   allPokemon: Result[];
