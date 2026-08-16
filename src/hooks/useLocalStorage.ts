@@ -1,18 +1,5 @@
 import { useEffect, useState } from "react";
-
-function parseStoredValue<T>(
-  raw: string | null,
-  initialValue: T,
-  validate?: (value: unknown) => value is T
-): T {
-  if (raw === null) return initialValue;
-  try {
-    const parsed: unknown = JSON.parse(raw);
-    return validate ? (validate(parsed) ? parsed : initialValue) : (parsed as T);
-  } catch {
-    return initialValue;
-  }
-}
+import { parseStoredValue } from "../utils/storage";
 
 export function useLocalStorage<T>(
   key: string,

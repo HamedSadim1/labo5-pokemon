@@ -1,9 +1,7 @@
 import { useLayoutEffect } from "react";
 import { useLocalStorage } from "./useLocalStorage";
 import { DARK_MODE_CLASS, STORAGE_KEYS } from "../constants";
-
-const isBoolean = (value: unknown): value is boolean =>
-  typeof value === "boolean";
+import { isBoolean } from "../utils/guards";
 
 export function useDarkMode() {
   const [darkMode, setDarkMode] = useLocalStorage<boolean>(

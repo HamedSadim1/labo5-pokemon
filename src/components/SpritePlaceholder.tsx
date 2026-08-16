@@ -1,3 +1,6 @@
+import { TEXT } from "../constants";
+import { cn } from "@/lib/utils";
+
 interface SpritePlaceholderProps {
   size?: "sm" | "lg";
 }
@@ -10,14 +13,15 @@ const SpritePlaceholder = ({ size = "sm" }: SpritePlaceholderProps) => {
   const isLarge = size === "lg";
   return (
     <div
-      className={`flex items-center justify-center rounded-lg bg-muted ${
+      className={cn(
+        "flex items-center justify-center rounded-lg bg-muted",
         isLarge ? "size-36" : "size-24"
-      }`}
+      )}
     >
       <span
-        className={`text-muted-foreground ${isLarge ? "text-sm" : "text-xs"}`}
+        className={cn("text-muted-foreground", isLarge ? "text-sm" : "text-xs")}
       >
-        No image
+        {TEXT.noImage}
       </span>
     </div>
   );

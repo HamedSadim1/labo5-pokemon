@@ -1,5 +1,7 @@
 import { RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { TEXT } from "../constants";
+import { cn } from "@/lib/utils";
 
 interface ErrorStateProps {
   message: string;
@@ -18,16 +20,17 @@ const ErrorState = ({
 }: ErrorStateProps) => {
   return (
     <div
-      className={`flex flex-col items-center gap-4 text-center ${
+      className={cn(
+        "flex flex-col items-center gap-4 text-center",
         compact
           ? "py-6"
           : "rounded-xl border border-destructive/30 bg-destructive/5 p-10"
-      }`}
+      )}
     >
       <p className="text-sm text-destructive">{message}</p>
       <Button variant="outline" onClick={onRetry}>
         <RefreshCw aria-hidden="true" />
-        Try again
+        {TEXT.retry}
       </Button>
     </div>
   );

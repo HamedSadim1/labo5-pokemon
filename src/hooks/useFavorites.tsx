@@ -1,10 +1,8 @@
 /* eslint-disable react-refresh/only-export-components */
 import { createContext, useContext, useMemo, type ReactNode } from "react";
 import { useLocalStorage } from "./useLocalStorage";
-import { STORAGE_KEYS } from "../constants";
-
-const isStringArray = (value: unknown): value is string[] =>
-  Array.isArray(value) && value.every((item) => typeof item === "string");
+import { STORAGE_KEYS, TEXT } from "../constants";
+import { isStringArray } from "../utils/guards";
 
 interface FavoritesContextValue {
   favorites: string[];
@@ -63,7 +61,7 @@ export function FavoritesProvider({ children }: { children: ReactNode }) {
 export function useFavorites(): FavoritesContextValue {
   const context = useContext(FavoritesContext);
   if (!context) {
-    throw new Error("useFavorites must be used within a FavoritesProvider");
+    throw new Error(TEXT.favoritesContextError);
   }
   return context;
 }

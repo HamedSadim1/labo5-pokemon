@@ -11,6 +11,7 @@ import {
 } from "../utils/pokemonUtils";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { TEXT } from "../constants";
 import SpritePlaceholder from "./SpritePlaceholder";
 
 interface PokemonCardProps {
@@ -32,9 +33,9 @@ const PokemonCard = ({ pokemon, onClick }: PokemonCardProps) => {
   const handleFavoriteToggle = () => {
     toggleFavorite(pokemon.name);
     if (favorite) {
-      toast.info(`${displayName} removed from favorites`);
+      toast.info(TEXT.toastRemovedFromFavorites(displayName));
     } else {
-      toast.success(`${displayName} added to favorites`);
+      toast.success(TEXT.toastAddedToFavorites(displayName));
     }
   };
 
@@ -68,7 +69,7 @@ const PokemonCard = ({ pokemon, onClick }: PokemonCardProps) => {
         variant="ghost"
         size="icon-sm"
         className="absolute right-2 top-2"
-        aria-label={`Toggle favorite for ${pokemon.name}`}
+        aria-label={TEXT.toggleFavoriteLabel(pokemon.name)}
         onClick={handleFavoriteToggle}
       >
         <Heart

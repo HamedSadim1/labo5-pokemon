@@ -1,6 +1,11 @@
 import { type PokemonDetail } from "../Services/PokemonInterface";
 import { formatDexNumber, formatPokemonName, getTypeColor } from "../utils/pokemonUtils";
-import { DECIMETERS_PER_METER, MAX_BASE_STAT } from "../constants";
+import {
+  DECIMETERS_PER_METER,
+  MAX_BASE_STAT,
+  MODAL_BODY_MAX_HEIGHT_CLASS,
+  TEXT,
+} from "../constants";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Loader2 } from "lucide-react";
@@ -11,10 +16,9 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { cn } from "@/lib/utils";
 import ErrorState from "./ErrorState";
 import SpritePlaceholder from "./SpritePlaceholder";
-
-const LOADING_LABEL = "Loading…";
 
 interface PokemonModalProps {
   pokemon: PokemonDetail | null;
@@ -44,18 +48,18 @@ const PokemonModal = ({
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>
-            {pokemon ? formatPokemonName(pokemon.name) : LOADING_LABEL}
+            {pokemon ? formatPokemonName(pokemon.name) : TEXT.loading}
           </DialogTitle>
-          <DialogDescription>Pokémon details</DialogDescription>
+          <DialogDescription>{TEXT.modalDescription}</DialogDescription>
         </DialogHeader>
 
-        <div className="max-h-[calc(90dvh-10rem)] overflow-y-auto pr-1" tabIndex={0}>
+        <div className={cn(MODAL_BODY_MAX_HEIGHT_CLASS, "overflow-y-auto pr-1")} tabIndex={0}>
           {error && <ErrorState message={error} onRetry={onRetry} compact />}
 
           {!error && !pokemon && (
             <div className="flex justify-center py-10" role="status">
               <Loader2 className="size-8 motion-safe:animate-spin text-primary" aria-hidden="true" />
-              <span className="sr-only">{LOADING_LABEL}</span>
+              <span className="sr-only">{TEXT.loading}</span>
             </div>
           )}
 
@@ -80,7 +84,7 @@ const PokemonModal = ({
                 {(pokemon.types ?? []).map((typeInfo) => (
                   <Badge
                     key={typeInfo.type.name}
-                    className={`capitalize ${getTypeColor(typeInfo.type.name)}`}
+                    className={cn("capitalize", getTypeColor(typeInfo.type.name))}
                   >
                     {typeInfo.type.name}
                   </Badge>
@@ -89,17 +93,17 @@ const PokemonModal = ({
 
               <div className="grid grid-cols-2 gap-4 text-center">
                 <div className="rounded-lg border p-3">
-                  <div className="text-sm text-muted-foreground">Height</div>
-                  <div className="font-semibold">{pokemon.height / DECIMETERS_PER_METER} m</div>
+                  <div className="text-sm text-muted-foreground">{TEXT.statHeight}</div>
+                  <div className="font-semibold">{pokemon.height / DECIMETERS_PER_METER} {TEXT.unitMeters}</div>
                 </div>
                 <div className="rounded-lg border p-3">
-                  <div className="text-sm text-muted-foreground">Weight</div>
-                  <div className="font-semibold">{pokemon.weight / DECIMETERS_PER_METER} kg</div>
+                  <div className="text-sm text-muted-foreground">{TEXT.statWeight}</div>
+                  <div className="font-semibold">{pokemon.weight / DECIMETERS_PER_METER} {TEXT.unitKilograms}</div>
                 </div>
               </div>
 
               <div className="flex flex-col gap-2">
-                <h3 className="text-sm font-medium">Abilities</h3>
+                <h3 className="text-sm font-medium">{TEXT.sectionAbilities}</h3>
                 <div className="flex flex-wrap gap-2">
                   {(pokemon.abilities ?? []).map((abilityInfo) => (
                     <Badge
@@ -108,7 +112,7 @@ const PokemonModal = ({
                     >
                       {formatPokemonName(abilityInfo.ability.name)}
                       {abilityInfo.is_hidden && (
-                        <span className="text-muted-foreground">(hidden)</span>
+                        <span className="text-muted-foreground">{TEXT.hiddenAbility}</span>
                       )}
                     </Badge>
                   ))}
@@ -116,7 +120,7 @@ const PokemonModal = ({
               </div>
 
               <div className="flex flex-col gap-2">
-                <h3 className="text-sm font-medium">Stats</h3>
+                <h3 className="text-sm font-medium">{TEXT.sectionStats}</h3>
                 {(pokemon.stats ?? []).map((stat) => (
                   <div key={stat.stat.name} className="flex items-center gap-3">
                     <span className="w-24 shrink-0 text-sm text-muted-foreground">

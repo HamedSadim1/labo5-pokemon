@@ -1,5 +1,5 @@
 import { Search, X } from "lucide-react";
-import { PAGE_SIZE_OPTIONS } from "../constants";
+import { PAGE_SIZE_OPTIONS, TEXT } from "../constants";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -31,8 +31,8 @@ const SearchBar = ({
         <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" aria-hidden="true" />
         <Input
           type="text"
-          placeholder="Search Pokémon..."
-          aria-label="Search Pokémon"
+          placeholder={TEXT.searchPlaceholder}
+          aria-label={TEXT.searchLabel}
           className="pl-9 pr-9"
           value={filterInput}
           onChange={(e) => onFilterChange(e.target.value)}
@@ -42,7 +42,7 @@ const SearchBar = ({
             type="button"
             onClick={() => onFilterChange("")}
             className="absolute right-2 top-1/2 -translate-y-1/2 rounded-sm p-1 text-muted-foreground transition-colors hover:text-foreground"
-            aria-label="Clear search"
+            aria-label={TEXT.clearSearch}
           >
             <X className="size-4" aria-hidden="true" />
           </button>
@@ -53,13 +53,13 @@ const SearchBar = ({
         value={String(limit)}
         onValueChange={(value) => onLimitChange(Number(value))}
       >
-        <SelectTrigger className="w-full sm:w-45" aria-label="Items per page">
-          <SelectValue placeholder="Items per page" />
+        <SelectTrigger className="w-full sm:w-45" aria-label={TEXT.itemsPerPage}>
+          <SelectValue placeholder={TEXT.itemsPerPage} />
         </SelectTrigger>
         <SelectContent>
           {PAGE_SIZE_OPTIONS.map((size) => (
             <SelectItem key={size} value={String(size)}>
-              {size} per page
+              {size} {TEXT.itemsPerPageSuffix}
             </SelectItem>
           ))}
         </SelectContent>

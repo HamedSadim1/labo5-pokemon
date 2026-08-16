@@ -1,5 +1,5 @@
 import { HeartOff, SearchX } from "lucide-react";
-import { TABS, type PokemonTab } from "../constants";
+import { TABS, TEXT, type PokemonTab } from "../constants";
 import EmptyState from "./EmptyState";
 
 interface PokemonEmptyStateProps {
@@ -14,11 +14,11 @@ interface PokemonEmptyStateProps {
 const PokemonEmptyState = ({ activeTab, query }: PokemonEmptyStateProps) => {
   const trimmedQuery = query.trim();
 
-  let message = "No Pokémon found.";
+  let message = TEXT.emptyNoPokemon;
   if (activeTab === TABS.favorites) {
-    message = "No favorite Pokémon yet. Tap the heart on a card to add one.";
+    message = TEXT.emptyNoFavorites;
   } else if (trimmedQuery) {
-    message = `No Pokémon found for "${trimmedQuery}".`;
+    message = TEXT.emptyNoSearchResults(trimmedQuery);
   }
 
   return (

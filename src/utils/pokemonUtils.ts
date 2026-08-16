@@ -21,8 +21,10 @@ export type PokemonType =
   | "steel"
   | "fairy";
 
+const DEFAULT_TYPE_COLOR = "bg-slate-600 text-white";
+
 const typeColors: Record<PokemonType, string> = {
-  normal: "bg-slate-600 text-white",
+  normal: DEFAULT_TYPE_COLOR,
   fire: "bg-orange-800 text-white",
   water: "bg-blue-600 text-white",
   electric: "bg-yellow-400 text-yellow-950",
@@ -46,7 +48,7 @@ const isPokemonType = (value: string): value is PokemonType =>
   value in typeColors;
 
 export const getTypeColor = (type: string): string =>
-  isPokemonType(type) ? typeColors[type] : "bg-slate-600 text-white";
+  isPokemonType(type) ? typeColors[type] : DEFAULT_TYPE_COLOR;
 
 export const formatPokemonName = (name: string): string =>
   name.replace(/-/g, " ").replace(/\b\w/g, (char) => char.toUpperCase());

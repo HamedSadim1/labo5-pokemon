@@ -1,34 +1,12 @@
 import { Button } from "@/components/ui/button";
-import { MAX_VISIBLE_PAGES } from "../constants";
-
-const ELLIPSIS = "ellipsis" as const;
-type PageToken = number | typeof ELLIPSIS;
+import { TEXT } from "../constants";
+import { ELLIPSIS, getVisiblePages } from "../utils/pagination";
 
 interface PaginationProps {
   page: number;
   totalPages: number;
   onPageChange: (page: number) => void;
 }
-
-/**
- * Returns a windowed list of page numbers (with ellipsis) for the pagination bar.
- */
-const getVisiblePages = (page: number, totalPages: number): PageToken[] => {
-  if (totalPages <= MAX_VISIBLE_PAGES) {
-    return Array.from({ length: totalPages }, (_, i) => i + 1);
-  }
-
-  const start = Math.max(2, page - 1);
-  const end = Math.min(totalPages - 1, page + 1);
-  const pages: PageToken[] = [1];
-
-  if (start > 2) pages.push(ELLIPSIS);
-  for (let i = start; i <= end; i += 1) pages.push(i);
-  if (end < totalPages - 1) pages.push(ELLIPSIS);
-  pages.push(totalPages);
-
-  return pages;
-};
 
 /**
  * Previous / next controls with a windowed page-number list.
@@ -42,7 +20,7 @@ const Pagination = ({ page, totalPages, onPageChange }: PaginationProps) => {
         onClick={() => onPageChange(page - 1)}
         disabled={page <= 1}
       >
-        Previous
+        {TEXT.paginationPrevious}
       </Button>
 
       {getVisiblePages(page, totalPages).map((p, index) =>
@@ -61,7 +39,7 @@ const Pagination = ({ page, totalPages, onPageChange }: PaginationProps) => {
             size="icon-sm"
             onClick={() => onPageChange(p)}
             aria-current={p === page ? "page" : undefined}
-            aria-label={`Page ${p}`}
+            aria-label={TEXT.pageLabel(p)}
           >
             {p}
           </Button>
@@ -74,7 +52,7 @@ const Pagination = ({ page, totalPages, onPageChange }: PaginationProps) => {
         onClick={() => onPageChange(page + 1)}
         disabled={page >= totalPages}
       >
-        Next
+        {TEXT.paginationNext}
       </Button>
     </div>
   );

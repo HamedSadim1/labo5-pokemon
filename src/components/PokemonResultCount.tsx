@@ -1,3 +1,5 @@
+import { TEXT } from "../constants";
+
 interface PokemonResultCountProps {
   first: number;
   last: number;
@@ -10,7 +12,7 @@ interface PokemonResultCountProps {
 const PokemonResultCount = ({ first, last, total }: PokemonResultCountProps) => {
   return (
     <p className="mb-4 text-sm text-muted-foreground" role="status">
-      Showing {first}–{last} of {total} Pokémon
+      {TEXT.resultCount(first, last, total)}
     </p>
   );
 };
