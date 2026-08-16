@@ -124,6 +124,10 @@
   body {
     @apply bg-background text-foreground;
   }
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
 }
 
 /* react-remove-scroll-bar (used by Radix Dialog) adds `margin-right` to the
