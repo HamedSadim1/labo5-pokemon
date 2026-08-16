@@ -116,7 +116,21 @@
   * {
     @apply border-border outline-ring/50;
   }
+  html {
+    /* Reserve space for the scrollbar so toggling content height (tabs,
+       empty states) doesn't shift the layout horizontally. */
+    scrollbar-gutter: stable;
+  }
   body {
     @apply bg-background text-foreground;
   }
+}
+
+/* react-remove-scroll-bar (used by Radix Dialog) adds `margin-right` to the
+   body while a dialog locks scroll, to compensate for the scrollbar it hides.
+   `scrollbar-gutter: stable` on <html> already reserves that space, so the
+   extra margin causes a double shift. Neutralize it (higher specificity than
+   the injected `body[data-scroll-locked]` rule). */
+html body[data-scroll-locked] {
+  margin-right: 0 !important;
 }
