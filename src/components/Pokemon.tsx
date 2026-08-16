@@ -36,6 +36,7 @@ const Pokemon: React.FC = () => {
   const [modalOpen, setModalOpen] = useState<boolean>(false);
   const [detailError, setDetailError] = useState<string | null>(null);
   const detailUrlRef = useRef<string | null>(null);
+  const detailAbortRef = useRef<AbortController | null>(null);
 
   const { isFavorite } = useFavorites();
 
@@ -60,6 +61,13 @@ const Pokemon: React.FC = () => {
       active = false;
     };
   }, [reloadKey]);
+
+  // Abort any in-flight detail request when the component unmounts.
+  useEffect(() => {
+    return () => {
+      detailAbortRef.current?.abort();
+    };
+  }, []);
 
   // Filter the full list by search query and active tab.
   const filteredPokemon = allPokemon.filter((pokemon) => {
@@ -88,12 +96,21 @@ const Pokemon: React.FC = () => {
     setDetailError(null);
     setModalOpen(true);
 
+    // Abort any in-flight detail request so a slow response for a previous
+    // Pokémon can't overwrite the newly selected one.
+    detailAbortRef.current?.abort();
+    const controller = new AbortController();
+    detailAbortRef.current = controller;
+
     void axios
-      .get<PokemonDetail>(url)
+      .get<PokemonDetail>(url, { signal: controller.signal })
       .then((response) => {
         setSelectedPokemon(response.data);
       })
       .catch((err) => {
+        if (axios.isCancel(err)) {
+          return;
+        }
         console.error("Error fetching Pokemon detail:", err);
         setDetailError("Failed to load this Pokémon. Please try again.");
       });

@@ -15,11 +15,11 @@ export interface PokemonDetail {
   name: string;
   base_experience: number;
   sprites: {
-    front_default: string;
+    front_default: string | null;
     other: {
       "official-artwork": {
-        front_default: string;
-      };
+        front_default: string | null;
+      } | null;
     };
   };
   types: {

@@ -51,7 +51,7 @@ const SearchBar = ({
         value={String(limit)}
         onValueChange={(value) => onLimitChange(Number(value))}
       >
-        <SelectTrigger className="w-full sm:w-[180px]">
+        <SelectTrigger className="w-full sm:w-45">
           <SelectValue placeholder="Items per page" />
         </SelectTrigger>
         <SelectContent>
