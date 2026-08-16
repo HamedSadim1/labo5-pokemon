@@ -19,6 +19,11 @@ export const REQUEST_TIMEOUT_MS = 15000;
 /** Axios error code emitted when a request times out. */
 export const AXIOS_TIMEOUT_CODE = "ECONNABORTED";
 
+/** User-facing error messages shared by the list and detail fetches. */
+export const TIMEOUT_MESSAGE = "The request timed out. Please try again.";
+export const GENERIC_LIST_ERROR_MESSAGE = "Failed to load Pokémon. Please try again.";
+export const GENERIC_DETAIL_ERROR_MESSAGE = "Failed to load this Pokémon. Please try again.";
+
 export const DEBOUNCE_MS = 300;
 
 export const SKELETON_COUNT = 8;

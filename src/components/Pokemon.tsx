@@ -1,113 +1,47 @@
-import React, { useState, useEffect, useRef, useMemo } from "react";
-import axios from "axios";
-import {
-  type IPokemon,
-  type Result,
-  type PokemonDetail,
-} from "../Services/PokemonInterface";
+import React, { useMemo, useState } from "react";
 import { useFavorites } from "../hooks/useFavorites";
-import { POKE_API_BASE_URL } from "../config";
+import { usePokemonList } from "../hooks/usePokemonList";
+import { usePokemonDetail } from "../hooks/usePokemonDetail";
+import { useDebouncedValue } from "../hooks/useDebouncedValue";
 import {
-  AXIOS_TIMEOUT_CODE,
   CONTAINER_CLASS,
   DEBOUNCE_MS,
   DEFAULT_PAGE_SIZE,
-  LIST_LIMIT,
-  POKEMON_GRID_CLASS,
-  REQUEST_TIMEOUT_MS,
-  SKELETON_COUNT,
   TABS,
   type PokemonTab,
 } from "../constants";
-import { Skeleton } from "@/components/ui/skeleton";
-import { HeartOff, SearchX } from "lucide-react";
 import Header from "./Header";
 import SearchBar from "./SearchBar";
-import EmptyState from "./EmptyState";
 import ErrorState from "./ErrorState";
+import PokemonEmptyState from "./PokemonEmptyState";
+import PokemonSkeleton from "./PokemonSkeleton";
 import PokemonGrid from "./PokemonGrid";
+import PokemonResultCount from "./PokemonResultCount";
 import Pagination from "./Pagination";
 import PokemonModal from "./PokemonModal";
 
-const TIMEOUT_MESSAGE = "The request timed out. Please try again.";
-const GENERIC_LIST_ERROR_MESSAGE = "Failed to load Pokémon. Please try again.";
-const GENERIC_DETAIL_ERROR_MESSAGE = "Failed to load this Pokémon. Please try again.";
-
-const isTimeout = (err: unknown): boolean =>
-  axios.isAxiosError(err) && err.code === AXIOS_TIMEOUT_CODE;
-
 /**
- * Main Pokemon component: loads the full Pokemon list once, then handles
- * search, favorites filtering, pagination and the detail modal on the client.
+ * Main Pokemon component: orchestrates the list/detail hooks and the search,
+ * favorites filtering and pagination of the client-side grid.
  */
 const Pokemon: React.FC = () => {
-  const [allPokemon, setAllPokemon] = useState<Result[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
-  const [reloadKey, setReloadKey] = useState<number>(0);
+  const { allPokemon, loading, error, retry } = usePokemonList();
+  const {
+    selectedPokemon,
+    modalOpen,
+    detailError,
+    openPokemonDetail,
+    retryDetail,
+    closeModal,
+  } = usePokemonDetail();
 
   const [filterInput, setFilterInput] = useState<string>("");
-  const [debouncedFilterInput, setDebouncedFilterInput] = useState<string>("");
+  const debouncedFilterInput = useDebouncedValue(filterInput, DEBOUNCE_MS);
   const [limit, setLimit] = useState<number>(DEFAULT_PAGE_SIZE);
   const [page, setPage] = useState<number>(1);
   const [activeTab, setActiveTab] = useState<PokemonTab>(TABS.all);
 
-  const [selectedPokemon, setSelectedPokemon] = useState<PokemonDetail | null>(
-    null
-  );
-  const [modalOpen, setModalOpen] = useState<boolean>(false);
-  const [detailError, setDetailError] = useState<string | null>(null);
-  const detailUrlRef = useRef<string | null>(null);
-  const detailAbortRef = useRef<AbortController | null>(null);
-
   const { favoritesSet } = useFavorites();
-
-  // Fetch the full Pokemon list once (and again on retry).
-  useEffect(() => {
-    let active = true;
-
-    axios
-      .get<IPokemon>(`${POKE_API_BASE_URL}/pokemon?limit=${LIST_LIMIT}&offset=0`, {
-        timeout: REQUEST_TIMEOUT_MS,
-      })
-      .then((response) => {
-        if (!active) return;
-        const { results } = response.data;
-        if (Array.isArray(results)) {
-          setAllPokemon(results);
-        } else {
-          setError(GENERIC_LIST_ERROR_MESSAGE);
-        }
-      })
-      .catch((err: unknown) => {
-        console.error("Error fetching Pokemon:", err);
-        if (active) {
-          setError(isTimeout(err) ? TIMEOUT_MESSAGE : GENERIC_LIST_ERROR_MESSAGE);
-        }
-      })
-      .finally(() => {
-        if (active) setLoading(false);
-      });
-
-    return () => {
-      active = false;
-    };
-  }, [reloadKey]);
-
-  // Abort any in-flight detail request when the component unmounts.
-  useEffect(() => {
-    return () => {
-      detailAbortRef.current?.abort();
-    };
-  }, []);
-
-  // Debounce the search input so filtering doesn't run on every keystroke.
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setDebouncedFilterInput(filterInput);
-    }, DEBOUNCE_MS);
-    return () => clearTimeout(timer);
-  }, [filterInput]);
 
   // Filter the full list by search query and active tab.
   const filteredPokemon = useMemo(() => {
@@ -139,47 +73,6 @@ const Pokemon: React.FC = () => {
   const firstResult = totalResults === 0 ? 0 : (safePage - 1) * limit + 1;
   const lastResult = Math.min(safePage * limit, totalResults);
 
-  /**
-   * Opens the detail modal immediately and loads the Pokemon details,
-   * showing a spinner and (on failure) a retry state inside the modal.
-   */
-  const openPokemonDetail = (url: string): void => {
-    detailUrlRef.current = url;
-    setSelectedPokemon(null);
-    setDetailError(null);
-    setModalOpen(true);
-
-    // Abort any in-flight detail request so a slow response for a previous
-    // Pokémon can't overwrite the newly selected one.
-    detailAbortRef.current?.abort();
-    const controller = new AbortController();
-    detailAbortRef.current = controller;
-
-    void axios
-      .get<PokemonDetail>(url, {
-        signal: controller.signal,
-        timeout: REQUEST_TIMEOUT_MS,
-      })
-      .then((response) => {
-        setSelectedPokemon(response.data);
-      })
-      .catch((err: unknown) => {
-        if (axios.isCancel(err)) {
-          return;
-        }
-        console.error("Error fetching Pokemon detail:", err);
-        setDetailError(
-          isTimeout(err) ? TIMEOUT_MESSAGE : GENERIC_DETAIL_ERROR_MESSAGE
-        );
-      });
-  };
-
-  const retryDetail = (): void => {
-    if (detailUrlRef.current) {
-      openPokemonDetail(detailUrlRef.current);
-    }
-  };
-
   const handleSearchChange = (value: string): void => {
     setFilterInput(value);
     setPage(1);
@@ -195,19 +88,6 @@ const Pokemon: React.FC = () => {
     setPage(1);
   };
 
-  const handleRetry = (): void => {
-    setLoading(true);
-    setError(null);
-    setReloadKey((key) => key + 1);
-  };
-
-  let emptyMessage = "No Pokémon found.";
-  if (activeTab === TABS.favorites) {
-    emptyMessage = "No favorite Pokémon yet. Tap the heart on a card to add one.";
-  } else if (filterInput.trim()) {
-    emptyMessage = `No Pokémon found for "${filterInput}".`;
-  }
-
   return (
     <div className={CONTAINER_CLASS}>
       <Header activeTab={activeTab} onTabChange={handleTabChange} />
@@ -219,38 +99,21 @@ const Pokemon: React.FC = () => {
         onLimitChange={handleLimitChange}
       />
 
-      {loading && (
-        <div className={POKEMON_GRID_CLASS}>
-          {Array.from({ length: SKELETON_COUNT }).map((_, index) => (
-            <div key={index} className="rounded-xl border bg-card p-6">
-              <Skeleton className="mx-auto size-24 rounded-full" />
-              <Skeleton className="mx-auto mt-3 h-4 w-16" />
-              <Skeleton className="mx-auto mt-2 h-4 w-24" />
-            </div>
-          ))}
-        </div>
-      )}
+      {loading && <PokemonSkeleton />}
 
-      {!loading && error && <ErrorState message={error} onRetry={handleRetry} />}
+      {!loading && error && <ErrorState message={error} onRetry={retry} />}
 
       {!loading && !error && filteredPokemon.length === 0 && (
-        <EmptyState
-          icon={
-            activeTab === TABS.favorites ? (
-              <HeartOff className="size-8 text-muted-foreground" aria-hidden="true" />
-            ) : (
-              <SearchX className="size-8 text-muted-foreground" aria-hidden="true" />
-            )
-          }
-          message={emptyMessage}
-        />
+        <PokemonEmptyState activeTab={activeTab} query={filterInput} />
       )}
 
       {!loading && !error && filteredPokemon.length > 0 && (
         <>
-          <p className="mb-4 text-sm text-muted-foreground" role="status">
-            Showing {firstResult}–{lastResult} of {totalResults} Pokémon
-          </p>
+          <PokemonResultCount
+            first={firstResult}
+            last={lastResult}
+            total={totalResults}
+          />
           <PokemonGrid
             pokemon={paginatedPokemon}
             onPokemonClick={openPokemonDetail}
@@ -266,7 +129,7 @@ const Pokemon: React.FC = () => {
       <PokemonModal
         pokemon={selectedPokemon}
         isOpen={modalOpen}
-        onClose={() => setModalOpen(false)}
+        onClose={closeModal}
         error={detailError}
         onRetry={retryDetail}
       />
