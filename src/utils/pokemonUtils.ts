@@ -1,4 +1,5 @@
 import { SPRITE_BASE_URL } from "../config";
+import { DEX_NUMBER_WIDTH } from "../constants";
 
 export type PokemonType =
   | "normal"
@@ -51,14 +52,12 @@ export const formatPokemonName = (name: string): string =>
   name.replace(/-/g, " ").replace(/\b\w/g, (char) => char.toUpperCase());
 
 export const formatDexNumber = (id: number): string =>
-  `#${String(id).padStart(3, "0")}`;
+  `#${String(id).padStart(DEX_NUMBER_WIDTH, "0")}`;
 
 export const getPokemonId = (url: string): number | null => {
   const match = url.match(/\/pokemon\/(\d+)\/?$/);
   return match ? Number(match[1]) : null;
 };
 
-export const getPokemonSprite = (url: string): string | null => {
-  const id = getPokemonId(url);
-  return id === null ? null : `${SPRITE_BASE_URL}/${id}.png`;
-};
+export const getPokemonSprite = (id: number): string =>
+  `${SPRITE_BASE_URL}/${id}.png`;

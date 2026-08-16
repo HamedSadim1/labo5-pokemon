@@ -1,7 +1,7 @@
 import { Heart, Moon, Sun } from "lucide-react";
 import { useDarkMode } from "../hooks/useDarkMode";
 import { useFavorites } from "../hooks/useFavorites";
-import { type PokemonTab } from "../constants";
+import { TABS, type PokemonTab } from "../constants";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
@@ -24,8 +24,8 @@ const Header = ({ activeTab, onTabChange }: HeaderProps) => {
         onValueChange={(value) => onTabChange(value as PokemonTab)}
       >
         <TabsList>
-          <TabsTrigger value="all">All Pokémon</TabsTrigger>
-          <TabsTrigger value="favorites">
+          <TabsTrigger value={TABS.all}>All Pokémon</TabsTrigger>
+          <TabsTrigger value={TABS.favorites}>
             <Heart className="size-4" aria-hidden="true" />
             Favorites ({favorites.length})
           </TabsTrigger>

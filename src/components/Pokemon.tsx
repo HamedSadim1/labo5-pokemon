@@ -8,10 +8,15 @@ import {
 import { useFavorites } from "../hooks/useFavorites";
 import { POKE_API_BASE_URL } from "../config";
 import {
+  AXIOS_TIMEOUT_CODE,
+  CONTAINER_CLASS,
   DEBOUNCE_MS,
   DEFAULT_PAGE_SIZE,
   LIST_LIMIT,
+  POKEMON_GRID_CLASS,
+  REQUEST_TIMEOUT_MS,
   SKELETON_COUNT,
+  TABS,
   type PokemonTab,
 } from "../constants";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -24,13 +29,12 @@ import PokemonGrid from "./PokemonGrid";
 import Pagination from "./Pagination";
 import PokemonModal from "./PokemonModal";
 
-const REQUEST_TIMEOUT_MS = 15000;
 const TIMEOUT_MESSAGE = "The request timed out. Please try again.";
 const GENERIC_LIST_ERROR_MESSAGE = "Failed to load Pokémon. Please try again.";
 const GENERIC_DETAIL_ERROR_MESSAGE = "Failed to load this Pokémon. Please try again.";
 
 const isTimeout = (err: unknown): boolean =>
-  axios.isAxiosError(err) && err.code === "ECONNABORTED";
+  axios.isAxiosError(err) && err.code === AXIOS_TIMEOUT_CODE;
 
 /**
  * Main Pokemon component: loads the full Pokemon list once, then handles
@@ -46,7 +50,7 @@ const Pokemon: React.FC = () => {
   const [debouncedFilterInput, setDebouncedFilterInput] = useState<string>("");
   const [limit, setLimit] = useState<number>(DEFAULT_PAGE_SIZE);
   const [page, setPage] = useState<number>(1);
-  const [activeTab, setActiveTab] = useState<PokemonTab>("all");
+  const [activeTab, setActiveTab] = useState<PokemonTab>(TABS.all);
 
   const [selectedPokemon, setSelectedPokemon] = useState<PokemonDetail | null>(
     null
@@ -56,7 +60,7 @@ const Pokemon: React.FC = () => {
   const detailUrlRef = useRef<string | null>(null);
   const detailAbortRef = useRef<AbortController | null>(null);
 
-  const { favorites } = useFavorites();
+  const { favoritesSet } = useFavorites();
 
   // Fetch the full Pokemon list once (and again on retry).
   useEffect(() => {
@@ -108,15 +112,14 @@ const Pokemon: React.FC = () => {
   // Filter the full list by search query and active tab.
   const filteredPokemon = useMemo(() => {
     const query = debouncedFilterInput.toLowerCase();
-    const favoriteSet = new Set(favorites);
 
     return allPokemon.filter((pokemon) => {
       const matchesSearch = pokemon.name.toLowerCase().includes(query);
       const matchesTab =
-        activeTab === "favorites" ? favoriteSet.has(pokemon.name) : true;
+        activeTab === TABS.favorites ? favoritesSet.has(pokemon.name) : true;
       return matchesSearch && matchesTab;
     });
-  }, [allPokemon, debouncedFilterInput, activeTab, favorites]);
+  }, [allPokemon, debouncedFilterInput, activeTab, favoritesSet]);
 
   const totalPages = Math.max(1, Math.ceil(filteredPokemon.length / limit));
 
@@ -199,14 +202,14 @@ const Pokemon: React.FC = () => {
   };
 
   let emptyMessage = "No Pokémon found.";
-  if (activeTab === "favorites") {
+  if (activeTab === TABS.favorites) {
     emptyMessage = "No favorite Pokémon yet. Tap the heart on a card to add one.";
   } else if (filterInput.trim()) {
     emptyMessage = `No Pokémon found for "${filterInput}".`;
   }
 
   return (
-    <div className="mx-auto w-full max-w-6xl">
+    <div className={CONTAINER_CLASS}>
       <Header activeTab={activeTab} onTabChange={handleTabChange} />
 
       <SearchBar
@@ -217,7 +220,7 @@ const Pokemon: React.FC = () => {
       />
 
       {loading && (
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+        <div className={POKEMON_GRID_CLASS}>
           {Array.from({ length: SKELETON_COUNT }).map((_, index) => (
             <div key={index} className="rounded-xl border bg-card p-6">
               <Skeleton className="mx-auto size-24 rounded-full" />
@@ -233,7 +236,7 @@ const Pokemon: React.FC = () => {
       {!loading && !error && filteredPokemon.length === 0 && (
         <EmptyState
           icon={
-            activeTab === "favorites" ? (
+            activeTab === TABS.favorites ? (
               <HeartOff className="size-8 text-muted-foreground" aria-hidden="true" />
             ) : (
               <SearchX className="size-8 text-muted-foreground" aria-hidden="true" />

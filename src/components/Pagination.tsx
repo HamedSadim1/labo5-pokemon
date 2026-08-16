@@ -1,6 +1,9 @@
 import { Button } from "@/components/ui/button";
 import { MAX_VISIBLE_PAGES } from "../constants";
 
+const ELLIPSIS = "ellipsis" as const;
+type PageToken = number | typeof ELLIPSIS;
+
 interface PaginationProps {
   page: number;
   totalPages: number;
@@ -10,21 +13,18 @@ interface PaginationProps {
 /**
  * Returns a windowed list of page numbers (with ellipsis) for the pagination bar.
  */
-const getVisiblePages = (
-  page: number,
-  totalPages: number
-): (number | "ellipsis")[] => {
+const getVisiblePages = (page: number, totalPages: number): PageToken[] => {
   if (totalPages <= MAX_VISIBLE_PAGES) {
     return Array.from({ length: totalPages }, (_, i) => i + 1);
   }
 
   const start = Math.max(2, page - 1);
   const end = Math.min(totalPages - 1, page + 1);
-  const pages: (number | "ellipsis")[] = [1];
+  const pages: PageToken[] = [1];
 
-  if (start > 2) pages.push("ellipsis");
+  if (start > 2) pages.push(ELLIPSIS);
   for (let i = start; i <= end; i += 1) pages.push(i);
-  if (end < totalPages - 1) pages.push("ellipsis");
+  if (end < totalPages - 1) pages.push(ELLIPSIS);
   pages.push(totalPages);
 
   return pages;
@@ -46,7 +46,7 @@ const Pagination = ({ page, totalPages, onPageChange }: PaginationProps) => {
       </Button>
 
       {getVisiblePages(page, totalPages).map((p, index) =>
-        p === "ellipsis" ? (
+        p === ELLIPSIS ? (
           <span
             key={`ellipsis-${index}`}
             className="px-1 text-sm text-muted-foreground"

@@ -1,5 +1,5 @@
 /* eslint-disable react-refresh/only-export-components */
-import { createContext, useContext, type ReactNode } from "react";
+import { createContext, useContext, useMemo, type ReactNode } from "react";
 import { useLocalStorage } from "./useLocalStorage";
 import { STORAGE_KEYS } from "../constants";
 
@@ -8,6 +8,7 @@ const isStringArray = (value: unknown): value is string[] =>
 
 interface FavoritesContextValue {
   favorites: string[];
+  favoritesSet: ReadonlySet<string>;
   toggleFavorite: (pokemonName: string) => void;
   isFavorite: (pokemonName: string) => boolean;
 }
@@ -24,6 +25,8 @@ export function FavoritesProvider({ children }: { children: ReactNode }) {
     [],
     isStringArray
   );
+
+  const favoritesSet = useMemo(() => new Set(favorites), [favorites]);
 
   /**
    * Toggles the favorite status of a Pokemon.
@@ -42,10 +45,12 @@ export function FavoritesProvider({ children }: { children: ReactNode }) {
    * @param pokemonName - The name of the Pokemon to check.
    */
   const isFavorite = (pokemonName: string): boolean =>
-    favorites.includes(pokemonName);
+    favoritesSet.has(pokemonName);
 
   return (
-    <FavoritesContext.Provider value={{ favorites, toggleFavorite, isFavorite }}>
+    <FavoritesContext.Provider
+      value={{ favorites, favoritesSet, toggleFavorite, isFavorite }}
+    >
       {children}
     </FavoritesContext.Provider>
   );

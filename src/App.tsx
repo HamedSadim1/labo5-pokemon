@@ -1,5 +1,6 @@
 import Pokemon from "./components/Pokemon";
 import { Toaster } from "@/components/ui/sonner";
+import { CONTAINER_CLASS } from "./constants";
 
 /**
  * Main App component that renders the Pokémon Explorer application.
@@ -14,7 +15,7 @@ function App() {
         Skip to content
       </a>
       <header className="sticky top-0 z-40 border-b bg-background/80 backdrop-blur">
-        <div className="mx-auto w-full max-w-6xl px-4 py-5">
+        <div className={`${CONTAINER_CLASS} px-4 py-5`}>
           <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">
             Pokémon Explorer
           </h1>
@@ -23,7 +24,7 @@ function App() {
           </p>
         </div>
       </header>
-      <main id="main-content" tabIndex={-1} className="mx-auto w-full max-w-6xl px-4 py-8">
+      <main id="main-content" tabIndex={-1} className={`${CONTAINER_CLASS} px-4 py-8`}>
         <Pokemon />
       </main>
       <Toaster />

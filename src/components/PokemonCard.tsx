@@ -26,7 +26,8 @@ const PokemonCard = ({ pokemon, onClick }: PokemonCardProps) => {
   const [imageError, setImageError] = useState(false);
   const favorite = isFavorite(pokemon.name);
   const displayName = formatPokemonName(pokemon.name);
-  const sprite = getPokemonSprite(pokemon.url);
+  const pokemonId = getPokemonId(pokemon.url);
+  const sprite = pokemonId === null ? null : getPokemonSprite(pokemonId);
 
   const handleFavoriteToggle = () => {
     toggleFavorite(pokemon.name);
@@ -57,7 +58,7 @@ const PokemonCard = ({ pokemon, onClick }: PokemonCardProps) => {
         )}
         <span className="flex flex-col items-center gap-1">
           <Badge variant="secondary" className="font-mono text-xs">
-            {formatDexNumber(getPokemonId(pokemon.url) ?? 0)}
+            {formatDexNumber(pokemonId ?? 0)}
           </Badge>
           <span className="font-semibold">{displayName}</span>
         </span>

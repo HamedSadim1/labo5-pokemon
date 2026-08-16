@@ -14,6 +14,8 @@ import {
 import ErrorState from "./ErrorState";
 import SpritePlaceholder from "./SpritePlaceholder";
 
+const LOADING_LABEL = "Loading…";
+
 interface PokemonModalProps {
   pokemon: PokemonDetail | null;
   isOpen: boolean;
@@ -42,7 +44,7 @@ const PokemonModal = ({
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>
-            {pokemon ? formatPokemonName(pokemon.name) : "Loading…"}
+            {pokemon ? formatPokemonName(pokemon.name) : LOADING_LABEL}
           </DialogTitle>
           <DialogDescription>Pokémon details</DialogDescription>
         </DialogHeader>
@@ -53,7 +55,7 @@ const PokemonModal = ({
           {!error && !pokemon && (
             <div className="flex justify-center py-10" role="status">
               <Loader2 className="size-8 motion-safe:animate-spin text-primary" aria-hidden="true" />
-              <span className="sr-only">Loading…</span>
+              <span className="sr-only">{LOADING_LABEL}</span>
             </div>
           )}
 
