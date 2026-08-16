@@ -3,7 +3,11 @@ import { Heart } from "lucide-react";
 import { toast } from "sonner";
 import { type Result } from "../Services/PokemonInterface";
 import { useFavorites } from "../hooks/useFavorites";
-import { getPokemonId, getPokemonSprite } from "../utils/pokemonUtils";
+import {
+  formatPokemonName,
+  getPokemonId,
+  getPokemonSprite,
+} from "../utils/pokemonUtils";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 
@@ -19,8 +23,7 @@ const PokemonCard = ({ pokemon, onClick }: PokemonCardProps) => {
   const { toggleFavorite, isFavorite } = useFavorites();
   const [imageError, setImageError] = useState(false);
   const favorite = isFavorite(pokemon.name);
-  const displayName =
-    pokemon.name.charAt(0).toUpperCase() + pokemon.name.slice(1);
+  const displayName = formatPokemonName(pokemon.name);
 
   const handleFavoriteToggle = () => {
     toggleFavorite(pokemon.name);
@@ -45,7 +48,7 @@ const PokemonCard = ({ pokemon, onClick }: PokemonCardProps) => {
         ) : (
           <img
             src={getPokemonSprite(pokemon.url)}
-            alt={pokemon.name}
+            alt={displayName}
             loading="lazy"
             onError={() => setImageError(true)}
             className="size-24 object-contain motion-safe:transition-transform motion-safe:group-hover:scale-110"
@@ -55,7 +58,7 @@ const PokemonCard = ({ pokemon, onClick }: PokemonCardProps) => {
           <Badge variant="secondary" className="font-mono text-xs">
             #{String(getPokemonId(pokemon.url)).padStart(3, "0")}
           </Badge>
-          <span className="font-semibold capitalize">{pokemon.name}</span>
+          <span className="font-semibold">{displayName}</span>
         </span>
       </button>
 

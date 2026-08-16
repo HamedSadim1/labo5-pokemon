@@ -21,6 +21,9 @@ export const getTypeColor = (type: string): string => {    const colors: Record<
     return colors[type] || "bg-slate-600 text-white";
 };
 
+export const formatPokemonName = (name: string): string =>
+  name.replace(/-/g, " ").replace(/\b\w/g, (char) => char.toUpperCase());
+
 export const getPokemonId = (url: string): number => {
   const match = url.match(/\/pokemon\/(\d+)\/?$/);
   return match ? Number(match[1]) : 0;

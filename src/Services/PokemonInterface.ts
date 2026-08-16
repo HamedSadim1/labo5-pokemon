@@ -26,19 +26,19 @@ export interface PokemonDetail {
     type: {
       name: string;
     };
-  }[];
+  }[] | null;
   stats: {
     base_stat: number;
     stat: {
       name: string;
     };
-  }[];
+  }[] | null;
   abilities: {
     ability: {
       name: string;
     };
     is_hidden: boolean;
-  }[];
+  }[] | null;
   height: number;
   weight: number;
 }

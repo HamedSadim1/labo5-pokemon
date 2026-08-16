@@ -1,5 +1,5 @@
 import { type PokemonDetail } from "../Services/PokemonInterface";
-import { getTypeColor } from "../utils/pokemonUtils";
+import { formatPokemonName, getTypeColor } from "../utils/pokemonUtils";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
@@ -39,8 +39,8 @@ const PokemonModal = ({
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle className="capitalize">
-            {pokemon?.name ?? "Loading…"}
+          <DialogTitle>
+            {pokemon ? formatPokemonName(pokemon.name) : "Loading…"}
           </DialogTitle>
           <DialogDescription>Pokémon details</DialogDescription>
         </DialogHeader>
@@ -72,7 +72,7 @@ const PokemonModal = ({
                 {spriteUrl ? (
                   <img
                     src={spriteUrl}
-                    alt={pokemon.name}
+                    alt={formatPokemonName(pokemon.name)}
                     className="size-36 object-contain"
                   />
                 ) : (
@@ -85,7 +85,7 @@ const PokemonModal = ({
               </div>
 
               <div className="flex flex-wrap justify-center gap-2">
-                {pokemon.types.map((typeInfo) => (
+                {(pokemon.types ?? []).map((typeInfo) => (
                   <Badge
                     key={typeInfo.type.name}
                     className={`capitalize ${getTypeColor(typeInfo.type.name)}`}
@@ -109,7 +109,7 @@ const PokemonModal = ({
               <div className="flex flex-col gap-2">
                 <h3 className="text-sm font-medium">Abilities</h3>
                 <div className="flex flex-wrap gap-2">
-                  {pokemon.abilities.map((abilityInfo) => (
+                  {(pokemon.abilities ?? []).map((abilityInfo) => (
                     <Badge
                       key={abilityInfo.ability.name}
                       variant="outline"
@@ -126,7 +126,7 @@ const PokemonModal = ({
 
               <div className="flex flex-col gap-2">
                 <h3 className="text-sm font-medium">Stats</h3>
-                {pokemon.stats.map((stat) => (
+                {(pokemon.stats ?? []).map((stat) => (
                   <div key={stat.stat.name} className="flex items-center gap-3">
                     <span className="w-24 shrink-0 text-sm capitalize text-muted-foreground">
                       {stat.stat.name.replace("-", " ")}

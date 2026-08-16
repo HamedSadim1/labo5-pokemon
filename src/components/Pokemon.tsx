@@ -6,11 +6,13 @@ import {
   type PokemonDetail,
 } from "../Services/PokemonInterface";
 import { useFavorites } from "../hooks/useFavorites";
-import { Button } from "@/components/ui/button";
-import { HeartOff, RefreshCw, SearchX } from "lucide-react";
+import { POKE_API_BASE_URL } from "../config";
+import { Skeleton } from "@/components/ui/skeleton";
+import { HeartOff, SearchX } from "lucide-react";
 import Header from "./Header";
 import SearchBar from "./SearchBar";
-import LoadingSpinner from "./LoadingSpinner";
+import EmptyState from "./EmptyState";
+import ErrorState from "./ErrorState";
 import PokemonGrid from "./PokemonGrid";
 import Pagination from "./Pagination";
 import PokemonModal from "./PokemonModal";
@@ -48,7 +50,7 @@ const Pokemon: React.FC = () => {
     let active = true;
 
     axios
-      .get<IPokemon>("https://pokeapi.co/api/v2/pokemon?limit=100000&offset=0", {
+      .get<IPokemon>(`${POKE_API_BASE_URL}/pokemon?limit=100000&offset=0`, {
         timeout: REQUEST_TIMEOUT_MS,
       })
       .then((response) => {
@@ -89,18 +91,17 @@ const Pokemon: React.FC = () => {
   }, [filterInput]);
 
   // Filter the full list by search query and active tab.
-  const filteredPokemon = useMemo(
-    () =>
-      allPokemon.filter((pokemon) => {
-        const matchesSearch = pokemon.name
-          .toLowerCase()
-          .includes(debouncedFilterInput.toLowerCase());
-        const matchesTab =
-          activeTab === "favorites" ? favorites.includes(pokemon.name) : true;
-        return matchesSearch && matchesTab;
-      }),
-    [allPokemon, debouncedFilterInput, activeTab, favorites]
-  );
+  const filteredPokemon = useMemo(() => {
+    const query = debouncedFilterInput.toLowerCase();
+    const favoriteSet = new Set(favorites);
+
+    return allPokemon.filter((pokemon) => {
+      const matchesSearch = pokemon.name.toLowerCase().includes(query);
+      const matchesTab =
+        activeTab === "favorites" ? favoriteSet.has(pokemon.name) : true;
+      return matchesSearch && matchesTab;
+    });
+  }, [allPokemon, debouncedFilterInput, activeTab, favorites]);
 
   const totalPages = Math.max(1, Math.ceil(filteredPokemon.length / limit));
 
@@ -116,6 +117,9 @@ const Pokemon: React.FC = () => {
     (safePage - 1) * limit,
     safePage * limit
   );
+  const totalResults = filteredPokemon.length;
+  const firstResult = totalResults === 0 ? 0 : (safePage - 1) * limit + 1;
+  const lastResult = Math.min(safePage * limit, totalResults);
 
   /**
    * Opens the detail modal immediately and loads the Pokemon details,
@@ -195,31 +199,38 @@ const Pokemon: React.FC = () => {
         onLimitChange={handleLimitChange}
       />
 
-      {loading && <LoadingSpinner />}
-
-      {!loading && error && (
-        <div className="flex flex-col items-center gap-4 rounded-xl border border-destructive/30 bg-destructive/5 p-10 text-center">
-          <p className="text-sm text-destructive">{error}</p>
-          <Button variant="outline" onClick={handleRetry}>
-            <RefreshCw aria-hidden="true" />
-            Try again
-          </Button>
+      {loading && (
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+          {Array.from({ length: 8 }).map((_, index) => (
+            <div key={index} className="rounded-xl border bg-card p-6">
+              <Skeleton className="mx-auto size-24 rounded-full" />
+              <Skeleton className="mx-auto mt-3 h-4 w-16" />
+              <Skeleton className="mx-auto mt-2 h-4 w-24" />
+            </div>
+          ))}
         </div>
       )}
 
+      {!loading && error && <ErrorState message={error} onRetry={handleRetry} />}
+
       {!loading && !error && filteredPokemon.length === 0 && (
-        <div className="flex flex-col items-center gap-3 rounded-xl border p-10 text-center">
-          {activeTab === "favorites" ? (
-            <HeartOff className="size-8 text-muted-foreground" aria-hidden="true" />
-          ) : (
-            <SearchX className="size-8 text-muted-foreground" aria-hidden="true" />
-          )}
-          <p className="text-sm text-muted-foreground">{emptyMessage}</p>
-        </div>
+        <EmptyState
+          icon={
+            activeTab === "favorites" ? (
+              <HeartOff className="size-8 text-muted-foreground" aria-hidden="true" />
+            ) : (
+              <SearchX className="size-8 text-muted-foreground" aria-hidden="true" />
+            )
+          }
+          message={emptyMessage}
+        />
       )}
 
       {!loading && !error && filteredPokemon.length > 0 && (
         <>
+          <p className="mb-4 text-sm text-muted-foreground" role="status">
+            Showing {firstResult}–{lastResult} of {totalResults} Pokémon
+          </p>
           <PokemonGrid
             pokemon={paginatedPokemon}
             onPokemonClick={openPokemonDetail}
