@@ -1,5 +1,6 @@
 import { type PokemonDetail } from "../Services/PokemonInterface";
 import { formatDexNumber, formatPokemonName, getTypeColor } from "../utils/pokemonUtils";
+import { DECIMETERS_PER_METER, MAX_BASE_STAT } from "../constants";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Loader2 } from "lucide-react";
@@ -87,11 +88,11 @@ const PokemonModal = ({
               <div className="grid grid-cols-2 gap-4 text-center">
                 <div className="rounded-lg border p-3">
                   <div className="text-sm text-muted-foreground">Height</div>
-                  <div className="font-semibold">{pokemon.height / 10} m</div>
+                  <div className="font-semibold">{pokemon.height / DECIMETERS_PER_METER} m</div>
                 </div>
                 <div className="rounded-lg border p-3">
                   <div className="text-sm text-muted-foreground">Weight</div>
-                  <div className="font-semibold">{pokemon.weight / 10} kg</div>
+                  <div className="font-semibold">{pokemon.weight / DECIMETERS_PER_METER} kg</div>
                 </div>
               </div>
 
@@ -120,7 +121,7 @@ const PokemonModal = ({
                       {formatPokemonName(stat.stat.name)}
                     </span>
                     <Progress
-                      value={Math.min((stat.base_stat / 255) * 100, 100)}
+                      value={Math.min((stat.base_stat / MAX_BASE_STAT) * 100, 100)}
                       className="flex-1"
                     />
                     <span className="w-8 text-right text-sm font-medium">

@@ -7,6 +7,13 @@ import {
 } from "../Services/PokemonInterface";
 import { useFavorites } from "../hooks/useFavorites";
 import { POKE_API_BASE_URL } from "../config";
+import {
+  DEBOUNCE_MS,
+  DEFAULT_PAGE_SIZE,
+  LIST_LIMIT,
+  SKELETON_COUNT,
+  type PokemonTab,
+} from "../constants";
 import { Skeleton } from "@/components/ui/skeleton";
 import { HeartOff, SearchX } from "lucide-react";
 import Header from "./Header";
@@ -37,9 +44,9 @@ const Pokemon: React.FC = () => {
 
   const [filterInput, setFilterInput] = useState<string>("");
   const [debouncedFilterInput, setDebouncedFilterInput] = useState<string>("");
-  const [limit, setLimit] = useState<number>(20);
+  const [limit, setLimit] = useState<number>(DEFAULT_PAGE_SIZE);
   const [page, setPage] = useState<number>(1);
-  const [activeTab, setActiveTab] = useState<"all" | "favorites">("all");
+  const [activeTab, setActiveTab] = useState<PokemonTab>("all");
 
   const [selectedPokemon, setSelectedPokemon] = useState<PokemonDetail | null>(
     null
@@ -56,7 +63,7 @@ const Pokemon: React.FC = () => {
     let active = true;
 
     axios
-      .get<IPokemon>(`${POKE_API_BASE_URL}/pokemon?limit=100000&offset=0`, {
+      .get<IPokemon>(`${POKE_API_BASE_URL}/pokemon?limit=${LIST_LIMIT}&offset=0`, {
         timeout: REQUEST_TIMEOUT_MS,
       })
       .then((response) => {
@@ -94,7 +101,7 @@ const Pokemon: React.FC = () => {
   useEffect(() => {
     const timer = setTimeout(() => {
       setDebouncedFilterInput(filterInput);
-    }, 300);
+    }, DEBOUNCE_MS);
     return () => clearTimeout(timer);
   }, [filterInput]);
 
@@ -180,7 +187,7 @@ const Pokemon: React.FC = () => {
     setPage(1);
   };
 
-  const handleTabChange = (tab: "all" | "favorites"): void => {
+  const handleTabChange = (tab: PokemonTab): void => {
     setActiveTab(tab);
     setPage(1);
   };
@@ -211,7 +218,7 @@ const Pokemon: React.FC = () => {
 
       {loading && (
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-          {Array.from({ length: 8 }).map((_, index) => (
+          {Array.from({ length: SKELETON_COUNT }).map((_, index) => (
             <div key={index} className="rounded-xl border bg-card p-6">
               <Skeleton className="mx-auto size-24 rounded-full" />
               <Skeleton className="mx-auto mt-3 h-4 w-16" />

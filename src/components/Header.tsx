@@ -1,12 +1,13 @@
 import { Heart, Moon, Sun } from "lucide-react";
 import { useDarkMode } from "../hooks/useDarkMode";
 import { useFavorites } from "../hooks/useFavorites";
+import { type PokemonTab } from "../constants";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 interface HeaderProps {
-  activeTab: "all" | "favorites";
-  onTabChange: (tab: "all" | "favorites") => void;
+  activeTab: PokemonTab;
+  onTabChange: (tab: PokemonTab) => void;
 }
 
 /**
@@ -20,7 +21,7 @@ const Header = ({ activeTab, onTabChange }: HeaderProps) => {
     <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
       <Tabs
         value={activeTab}
-        onValueChange={(value) => onTabChange(value as "all" | "favorites")}
+        onValueChange={(value) => onTabChange(value as PokemonTab)}
       >
         <TabsList>
           <TabsTrigger value="all">All Pokémon</TabsTrigger>

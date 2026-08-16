@@ -26,6 +26,7 @@ const PokemonCard = ({ pokemon, onClick }: PokemonCardProps) => {
   const [imageError, setImageError] = useState(false);
   const favorite = isFavorite(pokemon.name);
   const displayName = formatPokemonName(pokemon.name);
+  const sprite = getPokemonSprite(pokemon.url);
 
   const handleFavoriteToggle = () => {
     toggleFavorite(pokemon.name);
@@ -43,11 +44,11 @@ const PokemonCard = ({ pokemon, onClick }: PokemonCardProps) => {
         onClick={() => onClick(pokemon.url)}
         className="flex w-full flex-col items-center gap-3 rounded-xl border bg-card p-6 text-card-foreground shadow-sm motion-safe:transition-all hover:shadow-md motion-safe:hover:-translate-y-1 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50"
       >
-        {imageError ? (
+        {imageError || !sprite ? (
           <SpritePlaceholder />
         ) : (
           <img
-            src={getPokemonSprite(pokemon.url)}
+            src={sprite}
             alt={displayName}
             loading="lazy"
             onError={() => setImageError(true)}

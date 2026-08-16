@@ -1,4 +1,5 @@
 import { Search, X } from "lucide-react";
+import { PAGE_SIZE_OPTIONS } from "../constants";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -56,9 +57,11 @@ const SearchBar = ({
           <SelectValue placeholder="Items per page" />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="10">10 per page</SelectItem>
-          <SelectItem value="20">20 per page</SelectItem>
-          <SelectItem value="50">50 per page</SelectItem>
+          {PAGE_SIZE_OPTIONS.map((size) => (
+            <SelectItem key={size} value={String(size)}>
+              {size} per page
+            </SelectItem>
+          ))}
         </SelectContent>
       </Select>
     </div>

@@ -1,3 +1,5 @@
+import { SPRITE_BASE_URL } from "../config";
+
 export type PokemonType =
   | "normal"
   | "fire"
@@ -56,7 +58,7 @@ export const getPokemonId = (url: string): number | null => {
   return match ? Number(match[1]) : null;
 };
 
-export const getPokemonSprite = (url: string): string => {
+export const getPokemonSprite = (url: string): string | null => {
   const id = getPokemonId(url);
-  return `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${id ?? 0}.png`;
+  return id === null ? null : `${SPRITE_BASE_URL}/${id}.png`;
 };

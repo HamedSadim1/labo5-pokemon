@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import { MAX_VISIBLE_PAGES } from "../constants";
 
 interface PaginationProps {
   page: number;
@@ -13,7 +14,7 @@ const getVisiblePages = (
   page: number,
   totalPages: number
 ): (number | "ellipsis")[] => {
-  if (totalPages <= 7) {
+  if (totalPages <= MAX_VISIBLE_PAGES) {
     return Array.from({ length: totalPages }, (_, i) => i + 1);
   }
 
