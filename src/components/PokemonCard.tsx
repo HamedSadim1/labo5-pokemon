@@ -1,6 +1,11 @@
 import React from "react";
+import { Heart } from "lucide-react";
 import { type Result } from "../Services/PokemonInterface";
 import { useFavorites } from "../hooks/useFavorites";
+import { getPokemonId, getPokemonSprite } from "../utils/pokemonUtils";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 
 interface PokemonCardProps {
   pokemon: Result;
@@ -8,59 +13,59 @@ interface PokemonCardProps {
 }
 
 /**
- * Component that displays a single Pokemon card with name and favorite toggle.
- * Clicking the card triggers the onClick callback, and the heart icon toggles favorites.
+ * Displays a single Pokemon card with its sprite, id, name and favorite toggle.
  */
-const PokemonCard: React.FC<PokemonCardProps> = ({ pokemon, onClick }) => {
+const PokemonCard = ({ pokemon, onClick }: PokemonCardProps) => {
   const { toggleFavorite, isFavorite } = useFavorites();
+  const favorite = isFavorite(pokemon.name);
 
-  /**
-   * Handles the favorite toggle button click, preventing event propagation.
-   */
-  const handleFavoriteClick = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    toggleFavorite(pokemon.name);
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      onClick(pokemon.url);
+    }
   };
 
   return (
-    <div
-      className="backdrop-blur-xl bg-white/10 rounded-2xl border border-white/20 shadow-2xl hover:shadow-3xl transition-all duration-300 cursor-pointer transform hover:scale-105 relative hover:bg-white/15"
+    <Card
+      role="button"
+      tabIndex={0}
+      className="group relative cursor-pointer transition-all hover:-translate-y-1 hover:shadow-md"
       onClick={() => onClick(pokemon.url)}
+      onKeyDown={handleKeyDown}
     >
-      <button
-        onClick={handleFavoriteClick}
-        className="absolute top-3 right-3 p-2 rounded-full backdrop-blur-md bg-white/20 border border-white/30 hover:bg-white/30 transition-all duration-300 shadow-lg"
+      <Button
+        variant="ghost"
+        size="icon-sm"
+        className="absolute right-2 top-2 z-10"
         aria-label={`Toggle favorite for ${pokemon.name}`}
+        onClick={(e) => {
+          e.stopPropagation();
+          toggleFavorite(pokemon.name);
+        }}
       >
-        <svg
-          className={`w-5 h-5 ${
-            isFavorite(pokemon.name)
-              ? "text-red-400 fill-current"
-              : "text-white/70"
-          }`}
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
-          />
-        </svg>
-      </button>
-      <div className="p-6 text-center">
-        <div className="w-24 h-24 mx-auto mb-4 backdrop-blur-md bg-white/20 rounded-full flex items-center justify-center border border-white/30 shadow-lg">
-          <span className="text-2xl font-bold text-white">
-            {pokemon.name.charAt(0).toUpperCase()}
-          </span>
+        <Heart
+          className={
+            favorite ? "fill-red-500 text-red-500" : "text-muted-foreground"
+          }
+        />
+      </Button>
+
+      <CardContent className="flex flex-col items-center gap-3">
+        <img
+          src={getPokemonSprite(pokemon.url)}
+          alt={pokemon.name}
+          loading="lazy"
+          className="size-24 object-contain transition-transform group-hover:scale-110"
+        />
+        <div className="flex flex-col items-center gap-1">
+          <Badge variant="secondary" className="font-mono text-xs">
+            #{String(getPokemonId(pokemon.url)).padStart(3, "0")}
+          </Badge>
+          <h3 className="font-semibold capitalize">{pokemon.name}</h3>
         </div>
-        <h3 className="text-lg font-semibold text-white capitalize">
-          {pokemon.name}
-        </h3>
-      </div>
-    </div>
+      </CardContent>
+    </Card>
   );
 };
 

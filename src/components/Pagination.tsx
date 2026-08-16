@@ -1,5 +1,5 @@
-import React from "react";
 import { type IPokemon } from "../Services/PokemonInterface";
+import { Button } from "@/components/ui/button";
 
 interface PaginationProps {
   pokemonData: IPokemon | null;
@@ -9,34 +9,33 @@ interface PaginationProps {
   onNext: () => void;
 }
 
-const Pagination: React.FC<PaginationProps> = ({
+/**
+ * Previous / next page controls.
+ */
+const Pagination = ({
   pokemonData,
   offset,
   limit,
   onPrev,
   onNext,
-}) => {
+}: PaginationProps) => {
   if (!pokemonData) return null;
 
   return (
-    <div className="flex justify-center items-center gap-4">
-      <button
+    <div className="flex items-center justify-center gap-4">
+      <Button
+        variant="outline"
         onClick={onPrev}
         disabled={!pokemonData.previous}
-        className="px-6 py-3 backdrop-blur-md bg-white/10 border border-white/20 text-white rounded-xl hover:bg-white/15 disabled:bg-white/5 disabled:text-white/50 disabled:border-white/10 disabled:cursor-not-allowed transition-all duration-300 shadow-lg"
       >
         Previous
-      </button>
-      <span className="text-white/80 font-medium">
+      </Button>
+      <span className="text-sm text-muted-foreground">
         Page {Math.floor(offset / limit) + 1}
       </span>
-      <button
-        onClick={onNext}
-        disabled={!pokemonData.next}
-        className="px-6 py-3 backdrop-blur-md bg-white/10 border border-white/20 text-white rounded-xl hover:bg-white/15 disabled:bg-white/5 disabled:text-white/50 disabled:border-white/10 disabled:cursor-not-allowed transition-all duration-300 shadow-lg"
-      >
+      <Button variant="outline" onClick={onNext} disabled={!pokemonData.next}>
         Next
-      </button>
+      </Button>
     </div>
   );
 };

@@ -1,19 +1,12 @@
-import React from "react";
-import { FidgetSpinner } from "react-loader-spinner";
+import { Loader2 } from "lucide-react";
 
-const LoadingSpinner: React.FC = () => {
+/**
+ * Simple centered loading spinner.
+ */
+const LoadingSpinner = () => {
   return (
-    <div className="flex justify-center items-center py-12">
-      <FidgetSpinner
-        visible={true}
-        height="80"
-        width="80"
-        ariaLabel="dna-loading"
-        wrapperStyle={{}}
-        wrapperClass="dna-wrapper"
-        ballColors={["#ff0000", "#00ff00", "#0000ff"]}
-        backgroundColor="#F4442E"
-      />
+    <div className="flex justify-center py-12">
+      <Loader2 className="size-8 animate-spin text-primary" />
     </div>
   );
 };

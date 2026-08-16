@@ -1,5 +1,7 @@
-import React from "react";
 import { type PokemonDetail } from "../Services/PokemonInterface";
+import { getTypeColor } from "../utils/pokemonUtils";
+import { Badge } from "@/components/ui/badge";
+import { Progress } from "@/components/ui/progress";
 import {
   Dialog,
   DialogContent,
@@ -14,49 +16,20 @@ interface PokemonModalProps {
   onClose: () => void;
 }
 
-const PokemonModal: React.FC<PokemonModalProps> = ({
-  pokemon,
-  isOpen,
-  onClose,
-}) => {
+/**
+ * Modal dialog with detailed Pokemon information (sprite, types, stats, size).
+ */
+const PokemonModal = ({ pokemon, isOpen, onClose }: PokemonModalProps) => {
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent
-        className="sm:max-w-[425px] backdrop-blur-xl bg-white/10 border border-white/20 shadow-2xl"
-        showCloseButton={false}
-      >
+      <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle className="capitalize text-white">
-            {pokemon?.name}
-          </DialogTitle>
-          <DialogDescription className="text-white/80">
-            Pokémon Details
-          </DialogDescription>
+          <DialogTitle className="capitalize">{pokemon?.name}</DialogTitle>
+          <DialogDescription>Pokémon details</DialogDescription>
         </DialogHeader>
 
-        {/* Custom Close Button */}
-        <button
-          onClick={onClose}
-          className="absolute top-4 right-4 rounded-full p-2 backdrop-blur-md bg-white/20 border border-white/30 text-white hover:bg-white/30 transition-all duration-300"
-          aria-label="Close modal"
-        >
-          <svg
-            className="w-4 h-4"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M6 18L18 6M6 6l12 12"
-            />
-          </svg>
-        </button>
         {pokemon && (
-          <div className="grid gap-4 py-4">
-            {/* Pokemon Image */}
+          <div className="flex flex-col gap-5">
             <div className="flex justify-center">
               <img
                 src={
@@ -64,82 +37,48 @@ const PokemonModal: React.FC<PokemonModalProps> = ({
                   pokemon.sprites.front_default
                 }
                 alt={pokemon.name}
-                className="w-32 h-32 object-contain"
+                className="size-36 object-contain"
               />
             </div>
 
-            {/* Types */}
-            <div className="grid gap-2">
-              <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-white">
-                Types
-              </label>
-              <div className="flex gap-2">
-                {pokemon.types.map(
-                  (typeInfo: { type: { name: string } }, index: number) => (
-                    <span
-                      key={index}
-                      className="inline-flex items-center rounded-md px-2.5 py-0.5 text-xs font-medium text-white backdrop-blur-md bg-white/20 border border-white/30"
-                    >
-                      {typeInfo.type.name}
-                    </span>
-                  )
-                )}
+            <div className="flex flex-wrap justify-center gap-2">
+              {pokemon.types.map((typeInfo) => (
+                <Badge
+                  key={typeInfo.type.name}
+                  className={`capitalize text-white ${getTypeColor(typeInfo.type.name)}`}
+                >
+                  {typeInfo.type.name}
+                </Badge>
+              ))}
+            </div>
+
+            <div className="grid grid-cols-2 gap-4 text-center">
+              <div className="rounded-lg border p-3">
+                <div className="text-sm text-muted-foreground">Height</div>
+                <div className="font-semibold">{pokemon.height / 10} m</div>
+              </div>
+              <div className="rounded-lg border p-3">
+                <div className="text-sm text-muted-foreground">Weight</div>
+                <div className="font-semibold">{pokemon.weight / 10} kg</div>
               </div>
             </div>
 
-            {/* Stats */}
-            <div className="grid gap-2">
-              <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-white">
-                Stats
-              </label>
-              <div className="grid gap-2">
-                {pokemon.stats.map(
-                  (
-                    stat: { base_stat: number; stat: { name: string } },
-                    index: number
-                  ) => (
-                    <div
-                      key={index}
-                      className="grid grid-cols-3 items-center gap-4"
-                    >
-                      <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 capitalize text-white">
-                        {stat.stat.name.replace("-", " ")}
-                      </label>
-                      <div className="col-span-2 h-2 backdrop-blur-md bg-white/20 rounded-full border border-white/30">
-                        <div
-                          className="h-2 bg-linear-to-r from-yellow-400 to-pink-500 rounded-full transition-all"
-                          style={{
-                            width: `${Math.min(
-                              (stat.base_stat / 255) * 100,
-                              100
-                            )}%`,
-                          }}
-                        />
-                      </div>
-                    </div>
-                  )
-                )}
-              </div>
-            </div>
-
-            {/* Height and Weight */}
-            <div className="grid grid-cols-2 gap-4">
-              <div className="grid gap-2">
-                <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-white">
-                  Height
-                </label>
-                <div className="text-sm text-white">
-                  {pokemon.height / 10} m
+            <div className="flex flex-col gap-2">
+              <h4 className="text-sm font-medium">Stats</h4>
+              {pokemon.stats.map((stat) => (
+                <div key={stat.stat.name} className="flex items-center gap-3">
+                  <span className="w-24 shrink-0 text-sm capitalize text-muted-foreground">
+                    {stat.stat.name.replace("-", " ")}
+                  </span>
+                  <Progress
+                    value={Math.min((stat.base_stat / 255) * 100, 100)}
+                    className="flex-1"
+                  />
+                  <span className="w-8 text-right text-sm font-medium">
+                    {stat.base_stat}
+                  </span>
                 </div>
-              </div>
-              <div className="grid gap-2">
-                <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-white">
-                  Weight
-                </label>
-                <div className="text-sm text-white">
-                  {pokemon.weight / 10} kg
-                </div>
-              </div>
+              ))}
             </div>
           </div>
         )}

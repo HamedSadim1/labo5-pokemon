@@ -55,4 +55,11 @@ export default tseslint.config(
       'prefer-const': 'error',
     },
   },
+  {
+    // shadcn/ui components exporteren ook variant-helpers, dus geen fast-refresh regel hier
+    files: ['src/components/ui/**/*.{ts,tsx}'],
+    rules: {
+      'react-refresh/only-export-components': 'off',
+    },
+  },
 )
