@@ -49,6 +49,7 @@ const Pagination = ({ page, totalPages, onPageChange }: PaginationProps) => {
           <span
             key={`ellipsis-${index}`}
             className="px-1 text-sm text-muted-foreground"
+            aria-hidden="true"
           >
             …
           </span>
@@ -59,6 +60,7 @@ const Pagination = ({ page, totalPages, onPageChange }: PaginationProps) => {
             size="icon-sm"
             onClick={() => onPageChange(p)}
             aria-current={p === page ? "page" : undefined}
+            aria-label={`Page ${p}`}
           >
             {p}
           </Button>

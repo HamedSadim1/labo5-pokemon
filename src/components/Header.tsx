@@ -25,7 +25,7 @@ const Header = ({ activeTab, onTabChange }: HeaderProps) => {
         <TabsList>
           <TabsTrigger value="all">All Pokémon</TabsTrigger>
           <TabsTrigger value="favorites">
-            <Heart className="size-4" />
+            <Heart className="size-4" aria-hidden="true" />
             Favorites ({favorites.length})
           </TabsTrigger>
         </TabsList>
@@ -37,7 +37,7 @@ const Header = ({ activeTab, onTabChange }: HeaderProps) => {
         onClick={toggleDarkMode}
         aria-label="Toggle dark mode"
       >
-        {darkMode ? <Sun /> : <Moon />}
+        {darkMode ? <Sun aria-hidden="true" /> : <Moon aria-hidden="true" />}
       </Button>
     </div>
   );

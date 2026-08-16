@@ -36,7 +36,7 @@ const PokemonCard = ({ pokemon, onClick }: PokemonCardProps) => {
       <button
         type="button"
         onClick={() => onClick(pokemon.url)}
-        className="flex w-full flex-col items-center gap-3 rounded-xl border bg-card p-6 text-card-foreground shadow-sm transition-all hover:-translate-y-1 hover:shadow-md"
+        className="flex w-full flex-col items-center gap-3 rounded-xl border bg-card p-6 text-card-foreground shadow-sm motion-safe:transition-all hover:shadow-md motion-safe:hover:-translate-y-1 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50"
       >
         {imageError ? (
           <div className="flex size-24 items-center justify-center rounded-lg bg-muted">
@@ -48,7 +48,7 @@ const PokemonCard = ({ pokemon, onClick }: PokemonCardProps) => {
             alt={pokemon.name}
             loading="lazy"
             onError={() => setImageError(true)}
-            className="size-24 object-contain transition-transform group-hover:scale-110"
+            className="size-24 object-contain motion-safe:transition-transform motion-safe:group-hover:scale-110"
           />
         )}
         <span className="flex flex-col items-center gap-1">
@@ -70,6 +70,7 @@ const PokemonCard = ({ pokemon, onClick }: PokemonCardProps) => {
           className={
             favorite ? "fill-red-500 text-red-500" : "text-muted-foreground"
           }
+          aria-hidden="true"
         />
       </Button>
     </div>

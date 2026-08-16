@@ -201,7 +201,7 @@ const Pokemon: React.FC = () => {
         <div className="flex flex-col items-center gap-4 rounded-xl border border-destructive/30 bg-destructive/5 p-10 text-center">
           <p className="text-sm text-destructive">{error}</p>
           <Button variant="outline" onClick={handleRetry}>
-            <RefreshCw />
+            <RefreshCw aria-hidden="true" />
             Try again
           </Button>
         </div>
@@ -210,9 +210,9 @@ const Pokemon: React.FC = () => {
       {!loading && !error && filteredPokemon.length === 0 && (
         <div className="flex flex-col items-center gap-3 rounded-xl border p-10 text-center">
           {activeTab === "favorites" ? (
-            <HeartOff className="size-8 text-muted-foreground" />
+            <HeartOff className="size-8 text-muted-foreground" aria-hidden="true" />
           ) : (
-            <SearchX className="size-8 text-muted-foreground" />
+            <SearchX className="size-8 text-muted-foreground" aria-hidden="true" />
           )}
           <p className="text-sm text-muted-foreground">{emptyMessage}</p>
         </div>

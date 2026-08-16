@@ -45,20 +45,21 @@ const PokemonModal = ({
           <DialogDescription>Pokémon details</DialogDescription>
         </DialogHeader>
 
-        <div className="max-h-[calc(90dvh-10rem)] overflow-y-auto pr-1">
+        <div className="max-h-[calc(90dvh-10rem)] overflow-y-auto pr-1" tabIndex={0}>
           {error && (
             <div className="flex flex-col items-center gap-4 py-6 text-center">
               <p className="text-sm text-destructive">{error}</p>
               <Button variant="outline" onClick={onRetry}>
-                <RefreshCw />
+                <RefreshCw aria-hidden="true" />
                 Try again
               </Button>
             </div>
           )}
 
           {!error && !pokemon && (
-            <div className="flex justify-center py-10">
-              <Loader2 className="size-8 animate-spin text-primary" />
+            <div className="flex justify-center py-10" role="status">
+              <Loader2 className="size-8 motion-safe:animate-spin text-primary" aria-hidden="true" />
+              <span className="sr-only">Loading…</span>
             </div>
           )}
 
@@ -106,7 +107,7 @@ const PokemonModal = ({
               </div>
 
               <div className="flex flex-col gap-2">
-                <h4 className="text-sm font-medium">Abilities</h4>
+                <h3 className="text-sm font-medium">Abilities</h3>
                 <div className="flex flex-wrap gap-2">
                   {pokemon.abilities.map((abilityInfo) => (
                     <Badge
@@ -124,7 +125,7 @@ const PokemonModal = ({
               </div>
 
               <div className="flex flex-col gap-2">
-                <h4 className="text-sm font-medium">Stats</h4>
+                <h3 className="text-sm font-medium">Stats</h3>
                 {pokemon.stats.map((stat) => (
                   <div key={stat.stat.name} className="flex items-center gap-3">
                     <span className="w-24 shrink-0 text-sm capitalize text-muted-foreground">
