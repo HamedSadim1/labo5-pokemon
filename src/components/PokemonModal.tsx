@@ -45,7 +45,7 @@ const PokemonModal = ({ pokemon, isOpen, onClose }: PokemonModalProps) => {
               {pokemon.types.map((typeInfo) => (
                 <Badge
                   key={typeInfo.type.name}
-                  className={`capitalize text-white ${getTypeColor(typeInfo.type.name)}`}
+                  className={`capitalize ${getTypeColor(typeInfo.type.name)}`}
                 >
                   {typeInfo.type.name}
                 </Badge>

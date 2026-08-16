@@ -1,39 +1,29 @@
-import { type IPokemon } from "../Services/PokemonInterface";
 import { Button } from "@/components/ui/button";
 
 interface PaginationProps {
-  pokemonData: IPokemon | null;
-  offset: number;
-  limit: number;
+  page: number;
+  totalPages: number;
   onPrev: () => void;
   onNext: () => void;
 }
 
 /**
- * Previous / next page controls.
+ * Previous / next page controls with a page indicator.
  */
-const Pagination = ({
-  pokemonData,
-  offset,
-  limit,
-  onPrev,
-  onNext,
-}: PaginationProps) => {
-  if (!pokemonData) return null;
-
+const Pagination = ({ page, totalPages, onPrev, onNext }: PaginationProps) => {
   return (
     <div className="flex items-center justify-center gap-4">
-      <Button
-        variant="outline"
-        onClick={onPrev}
-        disabled={!pokemonData.previous}
-      >
+      <Button variant="outline" onClick={onPrev} disabled={page <= 1}>
         Previous
       </Button>
       <span className="text-sm text-muted-foreground">
-        Page {Math.floor(offset / limit) + 1}
+        Page {page} of {totalPages}
       </span>
-      <Button variant="outline" onClick={onNext} disabled={!pokemonData.next}>
+      <Button
+        variant="outline"
+        onClick={onNext}
+        disabled={page >= totalPages}
+      >
         Next
       </Button>
     </div>
