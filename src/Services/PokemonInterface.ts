@@ -1,5 +1,3 @@
-import React from "react";
-
 export interface IPokemon {
   count: number;
   next: string | null;

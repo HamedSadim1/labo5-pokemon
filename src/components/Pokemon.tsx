@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { IPokemon, Result, PokemonDetail } from "../Services/PokemonInterface";
+import { type IPokemon, type Result, type PokemonDetail } from "../Services/PokemonInterface";
 import axios from "axios";
 import Header from "./Header";
 import SearchBar from "./SearchBar";
@@ -17,7 +17,7 @@ const Pokemon: React.FC = () => {
   // State for storing the fetched Pokemon data from the API
   const [pokemonData, setPokemonData] = useState<IPokemon | null>(null);
   // State for indicating if data is being loaded
-  const [loading, setLoading] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(true);
   // State for the search filter input
   const [filterInput, setFilterInput] = useState<string>("");
   // State for the number of Pokemon to fetch per page
@@ -33,28 +33,30 @@ const Pokemon: React.FC = () => {
   // State for the active tab (all or favorites)
   const [activeTab, setActiveTab] = useState<"all" | "favorites">("all");
   // Hook for managing favorites
-  const { favorites, isFavorite } = useFavorites();
+  const { isFavorite } = useFavorites();
 
   // Effect to fetch Pokemon data when limit or offset changes
   useEffect(() => {
-    fetchPokemon();
-  }, [limit, offset]);
+    let active = true;
 
-  /**
-   * Fetches a list of Pokemon from the PokeAPI based on current limit and offset.
-   */
-  const fetchPokemon = async (): Promise<void> => {
-    setLoading(true);
-    try {
-      const response = await axios.get<IPokemon>(
+    axios
+      .get<IPokemon>(
         `https://pokeapi.co/api/v2/pokemon?limit=${limit}&offset=${offset}`
-      );
-      setPokemonData(response.data);
-    } catch (error) {
-      console.error("Error fetching Pokemon:", error);
-    }
-    setLoading(false);
-  };
+      )
+      .then((response) => {
+        if (active) setPokemonData(response.data);
+      })
+      .catch((error) => {
+        console.error("Error fetching Pokemon:", error);
+      })
+      .finally(() => {
+        if (active) setLoading(false);
+      });
+
+    return () => {
+      active = false;
+    };
+  }, [limit, offset]);
 
   /**
    * Fetches detailed information for a specific Pokemon and opens the modal.
@@ -86,6 +88,7 @@ const Pokemon: React.FC = () => {
    */
   const handleNext = (): void => {
     if (pokemonData?.next) {
+      setLoading(true);
       setOffset(offset + limit);
     }
   };
@@ -95,6 +98,7 @@ const Pokemon: React.FC = () => {
    */
   const handlePrev = (): void => {
     if (pokemonData?.previous && offset > 0) {
+      setLoading(true);
       setOffset(offset - limit);
     }
   };
@@ -116,7 +120,7 @@ const Pokemon: React.FC = () => {
       {!loading && (
         <PokemonGrid
           pokemon={filteredPokemon}
-          onPokemonClick={fetchPokemonDetail}
+          onPokemonClick={(url) => void fetchPokemonDetail(url)}
         />
       )}
 

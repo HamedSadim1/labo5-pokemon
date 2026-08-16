@@ -1,5 +1,5 @@
 import React from "react";
-import { PokemonDetail } from "../Services/PokemonInterface";
+import { type PokemonDetail } from "../Services/PokemonInterface";
 import {
   Dialog,
   DialogContent,

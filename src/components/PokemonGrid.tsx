@@ -1,5 +1,5 @@
 import React from "react";
-import { Result } from "../Services/PokemonInterface";
+import { type Result } from "../Services/PokemonInterface";
 import PokemonCard from "./PokemonCard";
 
 interface PokemonGridProps {

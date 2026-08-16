@@ -1,5 +1,5 @@
 import React from "react";
-import { IPokemon } from "../Services/PokemonInterface";
+import { type IPokemon } from "../Services/PokemonInterface";
 
 interface PaginationProps {
   pokemonData: IPokemon | null;

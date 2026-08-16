@@ -1,5 +1,5 @@
 import React from "react";
-import { Result } from "../Services/PokemonInterface";
+import { type Result } from "../Services/PokemonInterface";
 import { useFavorites } from "../hooks/useFavorites";
 
 interface PokemonCardProps {
