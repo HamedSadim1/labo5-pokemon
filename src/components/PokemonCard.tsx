@@ -1,4 +1,5 @@
 import { Heart } from "lucide-react";
+import { toast } from "sonner";
 import { type Result } from "../Services/PokemonInterface";
 import { useFavorites } from "../hooks/useFavorites";
 import { getPokemonId, getPokemonSprite } from "../utils/pokemonUtils";
@@ -16,6 +17,17 @@ interface PokemonCardProps {
 const PokemonCard = ({ pokemon, onClick }: PokemonCardProps) => {
   const { toggleFavorite, isFavorite } = useFavorites();
   const favorite = isFavorite(pokemon.name);
+  const displayName =
+    pokemon.name.charAt(0).toUpperCase() + pokemon.name.slice(1);
+
+  const handleFavoriteToggle = () => {
+    toggleFavorite(pokemon.name);
+    if (favorite) {
+      toast(`${displayName} removed from favorites`);
+    } else {
+      toast.success(`${displayName} added to favorites`);
+    }
+  };
 
   return (
     <div className="group relative">
@@ -43,7 +55,7 @@ const PokemonCard = ({ pokemon, onClick }: PokemonCardProps) => {
         size="icon-sm"
         className="absolute right-2 top-2"
         aria-label={`Toggle favorite for ${pokemon.name}`}
-        onClick={() => toggleFavorite(pokemon.name)}
+        onClick={handleFavoriteToggle}
       >
         <Heart
           className={

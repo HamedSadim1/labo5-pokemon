@@ -3,25 +3,72 @@ import { Button } from "@/components/ui/button";
 interface PaginationProps {
   page: number;
   totalPages: number;
-  onPrev: () => void;
-  onNext: () => void;
+  onPageChange: (page: number) => void;
 }
 
 /**
- * Previous / next page controls with a page indicator.
+ * Returns a windowed list of page numbers (with ellipsis) for the pagination bar.
  */
-const Pagination = ({ page, totalPages, onPrev, onNext }: PaginationProps) => {
+const getVisiblePages = (
+  page: number,
+  totalPages: number
+): (number | "ellipsis")[] => {
+  if (totalPages <= 7) {
+    return Array.from({ length: totalPages }, (_, i) => i + 1);
+  }
+
+  const start = Math.max(2, page - 1);
+  const end = Math.min(totalPages - 1, page + 1);
+  const pages: (number | "ellipsis")[] = [1];
+
+  if (start > 2) pages.push("ellipsis");
+  for (let i = start; i <= end; i += 1) pages.push(i);
+  if (end < totalPages - 1) pages.push("ellipsis");
+  pages.push(totalPages);
+
+  return pages;
+};
+
+/**
+ * Previous / next controls with a windowed page-number list.
+ */
+const Pagination = ({ page, totalPages, onPageChange }: PaginationProps) => {
   return (
-    <div className="flex items-center justify-center gap-4">
-      <Button variant="outline" onClick={onPrev} disabled={page <= 1}>
-        Previous
-      </Button>
-      <span className="text-sm text-muted-foreground">
-        Page {page} of {totalPages}
-      </span>
+    <div className="flex flex-wrap items-center justify-center gap-2">
       <Button
         variant="outline"
-        onClick={onNext}
+        size="sm"
+        onClick={() => onPageChange(page - 1)}
+        disabled={page <= 1}
+      >
+        Previous
+      </Button>
+
+      {getVisiblePages(page, totalPages).map((p, index) =>
+        p === "ellipsis" ? (
+          <span
+            key={`ellipsis-${index}`}
+            className="px-1 text-sm text-muted-foreground"
+          >
+            …
+          </span>
+        ) : (
+          <Button
+            key={p}
+            variant={p === page ? "default" : "outline"}
+            size="icon-sm"
+            onClick={() => onPageChange(p)}
+            aria-current={p === page ? "page" : undefined}
+          >
+            {p}
+          </Button>
+        )
+      )}
+
+      <Button
+        variant="outline"
+        size="sm"
+        onClick={() => onPageChange(page + 1)}
         disabled={page >= totalPages}
       >
         Next

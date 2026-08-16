@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import {
   type IPokemon,
@@ -34,6 +34,8 @@ const Pokemon: React.FC = () => {
     null
   );
   const [modalOpen, setModalOpen] = useState<boolean>(false);
+  const [detailError, setDetailError] = useState<string | null>(null);
+  const detailUrlRef = useRef<string | null>(null);
 
   const { isFavorite } = useFavorites();
 
@@ -77,15 +79,29 @@ const Pokemon: React.FC = () => {
   );
 
   /**
-   * Fetches detailed information for a specific Pokemon and opens the modal.
+   * Opens the detail modal immediately and loads the Pokemon details,
+   * showing a spinner and (on failure) a retry state inside the modal.
    */
-  const fetchPokemonDetail = async (url: string): Promise<void> => {
-    try {
-      const response = await axios.get<PokemonDetail>(url);
-      setSelectedPokemon(response.data);
-      setModalOpen(true);
-    } catch (err) {
-      console.error("Error fetching Pokemon detail:", err);
+  const openPokemonDetail = (url: string): void => {
+    detailUrlRef.current = url;
+    setSelectedPokemon(null);
+    setDetailError(null);
+    setModalOpen(true);
+
+    void axios
+      .get<PokemonDetail>(url)
+      .then((response) => {
+        setSelectedPokemon(response.data);
+      })
+      .catch((err) => {
+        console.error("Error fetching Pokemon detail:", err);
+        setDetailError("Failed to load this Pokémon. Please try again.");
+      });
+  };
+
+  const retryDetail = (): void => {
+    if (detailUrlRef.current) {
+      openPokemonDetail(detailUrlRef.current);
     }
   };
 
@@ -155,13 +171,12 @@ const Pokemon: React.FC = () => {
         <>
           <PokemonGrid
             pokemon={paginatedPokemon}
-            onPokemonClick={(url) => void fetchPokemonDetail(url)}
+            onPokemonClick={openPokemonDetail}
           />
           <Pagination
             page={safePage}
             totalPages={totalPages}
-            onPrev={() => setPage((p) => Math.max(1, p - 1))}
-            onNext={() => setPage((p) => Math.min(totalPages, p + 1))}
+            onPageChange={(p) => setPage(p)}
           />
         </>
       )}
@@ -170,6 +185,8 @@ const Pokemon: React.FC = () => {
         pokemon={selectedPokemon}
         isOpen={modalOpen}
         onClose={() => setModalOpen(false)}
+        error={detailError}
+        onRetry={retryDetail}
       />
     </div>
   );

@@ -1,4 +1,5 @@
 import Pokemon from "./components/Pokemon";
+import { Toaster } from "@/components/ui/sonner";
 
 /**
  * Main App component that renders the Pokémon Explorer application.
@@ -19,6 +20,7 @@ function App() {
       <main className="mx-auto w-full max-w-6xl px-4 py-8">
         <Pokemon />
       </main>
+      <Toaster />
     </div>
   );
 }

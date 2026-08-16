@@ -2,6 +2,8 @@ import { type PokemonDetail } from "../Services/PokemonInterface";
 import { getTypeColor } from "../utils/pokemonUtils";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
+import { Button } from "@/components/ui/button";
+import { Loader2, RefreshCw } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -14,23 +16,52 @@ interface PokemonModalProps {
   pokemon: PokemonDetail | null;
   isOpen: boolean;
   onClose: () => void;
+  error: string | null;
+  onRetry: () => void;
 }
 
 /**
- * Modal dialog with detailed Pokemon information (sprite, types, stats, size).
+ * Modal dialog with detailed Pokemon information, plus loading and error states.
  */
-const PokemonModal = ({ pokemon, isOpen, onClose }: PokemonModalProps) => {
+const PokemonModal = ({
+  pokemon,
+  isOpen,
+  onClose,
+  error,
+  onRetry,
+}: PokemonModalProps) => {
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle className="capitalize">{pokemon?.name}</DialogTitle>
+          <DialogTitle className="capitalize">
+            {pokemon?.name ?? "Loading…"}
+          </DialogTitle>
           <DialogDescription>Pokémon details</DialogDescription>
         </DialogHeader>
 
-        {pokemon && (
+        {error && (
+          <div className="flex flex-col items-center gap-4 py-6 text-center">
+            <p className="text-sm text-destructive">{error}</p>
+            <Button variant="outline" onClick={onRetry}>
+              <RefreshCw />
+              Try again
+            </Button>
+          </div>
+        )}
+
+        {!error && !pokemon && (
+          <div className="flex justify-center py-10">
+            <Loader2 className="size-8 animate-spin text-primary" />
+          </div>
+        )}
+
+        {!error && pokemon && (
           <div className="flex flex-col gap-5">
-            <div className="flex justify-center">
+            <div className="flex flex-col items-center gap-2">
+              <Badge variant="secondary" className="font-mono text-xs">
+                #{String(pokemon.id).padStart(3, "0")}
+              </Badge>
               <img
                 src={
                   pokemon.sprites.other["official-artwork"]?.front_default ||
@@ -60,6 +91,24 @@ const PokemonModal = ({ pokemon, isOpen, onClose }: PokemonModalProps) => {
               <div className="rounded-lg border p-3">
                 <div className="text-sm text-muted-foreground">Weight</div>
                 <div className="font-semibold">{pokemon.weight / 10} kg</div>
+              </div>
+            </div>
+
+            <div className="flex flex-col gap-2">
+              <h4 className="text-sm font-medium">Abilities</h4>
+              <div className="flex flex-wrap gap-2">
+                {pokemon.abilities.map((abilityInfo) => (
+                  <Badge
+                    key={abilityInfo.ability.name}
+                    variant="outline"
+                    className="capitalize"
+                  >
+                    {abilityInfo.ability.name.replace("-", " ")}
+                    {abilityInfo.is_hidden && (
+                      <span className="text-muted-foreground">(hidden)</span>
+                    )}
+                  </Badge>
+                ))}
               </div>
             </div>
 
