@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useMemo } from "react";
 import axios from "axios";
 import {
   type IPokemon,
@@ -15,6 +15,8 @@ import PokemonGrid from "./PokemonGrid";
 import Pagination from "./Pagination";
 import PokemonModal from "./PokemonModal";
 
+const REQUEST_TIMEOUT_MS = 15000;
+
 /**
  * Main Pokemon component: loads the full Pokemon list once, then handles
  * search, favorites filtering, pagination and the detail modal on the client.
@@ -26,6 +28,7 @@ const Pokemon: React.FC = () => {
   const [reloadKey, setReloadKey] = useState<number>(0);
 
   const [filterInput, setFilterInput] = useState<string>("");
+  const [debouncedFilterInput, setDebouncedFilterInput] = useState<string>("");
   const [limit, setLimit] = useState<number>(20);
   const [page, setPage] = useState<number>(1);
   const [activeTab, setActiveTab] = useState<"all" | "favorites">("all");
@@ -38,16 +41,24 @@ const Pokemon: React.FC = () => {
   const detailUrlRef = useRef<string | null>(null);
   const detailAbortRef = useRef<AbortController | null>(null);
 
-  const { isFavorite } = useFavorites();
+  const { favorites } = useFavorites();
 
   // Fetch the full Pokemon list once (and again on retry).
   useEffect(() => {
     let active = true;
 
     axios
-      .get<IPokemon>("https://pokeapi.co/api/v2/pokemon?limit=100000&offset=0")
+      .get<IPokemon>("https://pokeapi.co/api/v2/pokemon?limit=100000&offset=0", {
+        timeout: REQUEST_TIMEOUT_MS,
+      })
       .then((response) => {
-        if (active) setAllPokemon(response.data.results);
+        if (!active) return;
+        const { results } = response.data;
+        if (Array.isArray(results)) {
+          setAllPokemon(results);
+        } else {
+          setError("Failed to load Pokémon. Please try again.");
+        }
       })
       .catch((err) => {
         console.error("Error fetching Pokemon:", err);
@@ -69,17 +80,37 @@ const Pokemon: React.FC = () => {
     };
   }, []);
 
+  // Debounce the search input so filtering doesn't run on every keystroke.
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedFilterInput(filterInput);
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [filterInput]);
+
   // Filter the full list by search query and active tab.
-  const filteredPokemon = allPokemon.filter((pokemon) => {
-    const matchesSearch = pokemon.name
-      .toLowerCase()
-      .includes(filterInput.toLowerCase());
-    const matchesTab =
-      activeTab === "favorites" ? isFavorite(pokemon.name) : true;
-    return matchesSearch && matchesTab;
-  });
+  const filteredPokemon = useMemo(
+    () =>
+      allPokemon.filter((pokemon) => {
+        const matchesSearch = pokemon.name
+          .toLowerCase()
+          .includes(debouncedFilterInput.toLowerCase());
+        const matchesTab =
+          activeTab === "favorites" ? favorites.includes(pokemon.name) : true;
+        return matchesSearch && matchesTab;
+      }),
+    [allPokemon, debouncedFilterInput, activeTab, favorites]
+  );
 
   const totalPages = Math.max(1, Math.ceil(filteredPokemon.length / limit));
+
+  // Clamp the page during render when the number of pages shrinks
+  // (e.g. after unfavoriting). This is the React "adjust state during render"
+  // pattern and avoids the cascade of a setState-in-effect.
+  if (page > totalPages) {
+    setPage(totalPages);
+  }
+
   const safePage = Math.min(page, totalPages);
   const paginatedPokemon = filteredPokemon.slice(
     (safePage - 1) * limit,
@@ -103,7 +134,10 @@ const Pokemon: React.FC = () => {
     detailAbortRef.current = controller;
 
     void axios
-      .get<PokemonDetail>(url, { signal: controller.signal })
+      .get<PokemonDetail>(url, {
+        signal: controller.signal,
+        timeout: REQUEST_TIMEOUT_MS,
+      })
       .then((response) => {
         setSelectedPokemon(response.data);
       })

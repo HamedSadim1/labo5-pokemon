@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Heart } from "lucide-react";
 import { toast } from "sonner";
 import { type Result } from "../Services/PokemonInterface";
@@ -16,6 +17,7 @@ interface PokemonCardProps {
  */
 const PokemonCard = ({ pokemon, onClick }: PokemonCardProps) => {
   const { toggleFavorite, isFavorite } = useFavorites();
+  const [imageError, setImageError] = useState(false);
   const favorite = isFavorite(pokemon.name);
   const displayName =
     pokemon.name.charAt(0).toUpperCase() + pokemon.name.slice(1);
@@ -36,12 +38,19 @@ const PokemonCard = ({ pokemon, onClick }: PokemonCardProps) => {
         onClick={() => onClick(pokemon.url)}
         className="flex w-full flex-col items-center gap-3 rounded-xl border bg-card p-6 text-card-foreground shadow-sm transition-all hover:-translate-y-1 hover:shadow-md"
       >
-        <img
-          src={getPokemonSprite(pokemon.url)}
-          alt={pokemon.name}
-          loading="lazy"
-          className="size-24 object-contain transition-transform group-hover:scale-110"
-        />
+        {imageError ? (
+          <div className="flex size-24 items-center justify-center rounded-lg bg-muted">
+            <span className="text-xs text-muted-foreground">No image</span>
+          </div>
+        ) : (
+          <img
+            src={getPokemonSprite(pokemon.url)}
+            alt={pokemon.name}
+            loading="lazy"
+            onError={() => setImageError(true)}
+            className="size-24 object-contain transition-transform group-hover:scale-110"
+          />
+        )}
         <span className="flex flex-col items-center gap-1">
           <Badge variant="secondary" className="font-mono text-xs">
             #{String(getPokemonId(pokemon.url)).padStart(3, "0")}
