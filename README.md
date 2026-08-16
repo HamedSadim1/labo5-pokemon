@@ -65,9 +65,10 @@
 
 ### **Development Tools**
 
-- **ESLint** - Code linting
-- **PostCSS** - CSS processing
-- **Autoprefixer** - CSS vendor prefixing
+- **ESLint** - Code linting (flat config with type-aware TypeScript rules)
+- **Husky** - Git hooks
+- **lint-staged** - Lint staged files on commit
+- **commitlint** - Enforce conventional commit messages
 
 ---
 
@@ -75,7 +76,7 @@
 
 ### Prerequisites
 
-- Node.js 18+ and npm
+- Node.js 20.19+ or 22.12+ and npm
 - Git
 
 ### Installation
@@ -112,6 +113,35 @@ npm run build
 # Preview production build locally
 npm run preview
 ```
+
+### Available Scripts
+
+| Command | Description |
+| --- | --- |
+| `npm run dev` | Start the development server |
+| `npm run build` | Create a production build |
+| `npm run preview` | Preview the production build locally |
+| `npm run lint` | Run ESLint on the whole project |
+| `npm run typecheck` | Type-check the project with TypeScript |
+
+---
+
+## ✅ Code Quality
+
+### Git Hooks (Husky)
+
+Git hooks are set up automatically when you install dependencies:
+
+- **pre-commit** — runs `lint-staged`, which fixes lint issues on staged files
+- **commit-msg** — runs `commitlint` to enforce [Conventional Commits](https://www.conventionalcommits.org/)
+
+### Pull Request Checks
+
+A GitHub Actions workflow (`.github/workflows/pr.yml`) runs on every pull request and push to `main`:
+
+- **Typecheck** — `npm run typecheck`
+- **Lint** — `npm run lint`
+- **Build** — `npm run build`
 
 ---
 
@@ -203,15 +233,6 @@ src/
 
 ## 🔧 Configuration
 
-### Environment Variables
-
-Create a `.env` file in the root directory:
-
-```env
-# Optional: Configure API base URL
-VITE_POKEAPI_BASE_URL=https://pokeapi.co/api/v2
-```
-
 ### Tailwind Configuration
 
 The project uses Tailwind CSS v4 with custom animations:
@@ -241,14 +262,15 @@ We welcome contributions! Please follow these steps:
 
 1. Fork the repository
 2. Create a feature branch: `git checkout -b feature/amazing-feature`
-3. Commit your changes: `git commit -m 'Add amazing feature'`
+3. Commit your changes: `git commit -m 'feat: add amazing feature'`
 4. Push to the branch: `git push origin feature/amazing-feature`
 5. Open a Pull Request
 
 ### Development Guidelines
 
 - Follow the existing code style
-- Write meaningful commit messages
+- Write conventional commit messages (enforced by commitlint)
+- Run `npm run lint` and `npm run typecheck` before committing
 - Add tests for new features
 - Update documentation as needed
 
