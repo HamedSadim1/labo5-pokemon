@@ -53,6 +53,19 @@ export default tseslint.config(
       'no-debugger': 'error',
       eqeqeq: ['error', 'always'],
       'prefer-const': 'error',
+
+      // Verplicht de @-alias voor interne imports (geen relatieve paden)
+      'no-restricted-imports': [
+        'error',
+        { patterns: ['./**', '../**'] },
+      ],
+    },
+  },
+  {
+    // shadcn/ui components exporteren ook variant-helpers, dus geen fast-refresh regel hier
+    files: ['src/components/ui/**/*.{ts,tsx}'],
+    rules: {
+      'react-refresh/only-export-components': 'off',
     },
   },
 )

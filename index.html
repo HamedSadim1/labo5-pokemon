@@ -6,6 +6,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Pokémon Explorer</title>
     <link rel="manifest" href="/manifest.json" />
+    <script>
+      // Apply dark mode before the app loads to avoid a flash of the light theme.
+      (function () {
+        try {
+          if (JSON.parse(localStorage.getItem("dark-mode") || "false")) {
+            document.documentElement.classList.add("dark");
+          }
+        } catch (e) {
+          /* ignore */
+        }
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>
