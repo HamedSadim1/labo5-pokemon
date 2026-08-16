@@ -23,7 +23,7 @@ const PokemonCard = ({ pokemon, onClick }: PokemonCardProps) => {
   const handleFavoriteToggle = () => {
     toggleFavorite(pokemon.name);
     if (favorite) {
-      toast(`${displayName} removed from favorites`);
+      toast.info(`${displayName} removed from favorites`);
     } else {
       toast.success(`${displayName} added to favorites`);
     }
