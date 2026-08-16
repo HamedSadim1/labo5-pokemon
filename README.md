@@ -8,7 +8,7 @@
 
 ## A clean, modern Pokémon discovery app built with React, Tailwind CSS and shadcn/ui
 
-[🌐 Live Demo](labo5-pokemon.vercel.app) • [🐛 Report Bug](https://github.com/HamedSadim1/labo5-pokemon/issues)
+[🌐 Live Demo](https://labo5-pokemon.vercel.app/) • [🐛 Report Bug](https://github.com/HamedSadim1/labo5-pokemon/issues)
 
 ---
 
